@@ -1,0 +1,36 @@
+.item {
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 8px 0 rgba(0, 0%, 0%, 0.2);
+  color: var(--text-800);
+  background-color: var(--bg-800);
+}
+
+.image {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  overflow: hidden;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  padding: 2.5rem;
+  gap: 0.5rem;
+
+  h3 {
+    font-size: 2rem;
+    color: var(--text-900);
+  }
+
+  time {
+    font-style: italic;
+    color: var(--text-700);
+    font-size: 1.5rem;
+  }
+
+  p {
+    line-height: 2.5rem;
+  }
+}

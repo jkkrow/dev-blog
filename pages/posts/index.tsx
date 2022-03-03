@@ -2,37 +2,37 @@ import Head from 'next/head';
 import type { GetStaticProps, InferGetStaticPropsType } from 'next';
 import { Fragment } from 'react';
 
-import Hero from 'components/Hero';
 import PostGrid from 'components/Post/Grid';
 import { Post } from 'types/post';
-import { getFeaturedPosts } from 'lib/posts-util';
+import { getAllPosts } from 'lib/posts-util';
 
 interface Props {
   posts: Post[];
 }
 
-const HomePage = ({
+const PostsPage = ({
   posts,
 }: InferGetStaticPropsType<typeof getStaticProps>) => {
   return (
     <Fragment>
       <Head>
-        <title>NextJS Blog</title>
-        <meta name="description" content="Fullstack web development blog" />
-        <link rel="icon" href="/favicon.ico" />
+        <title>All Posts</title>
+        <meta
+          name="description"
+          content="A list of web development related posts"
+        />
       </Head>
-      <Hero />
-      <PostGrid posts={posts} label="Featured Posts" />
+      <PostGrid posts={posts} label="All Posts" />
     </Fragment>
   );
 };
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
-  const posts = getFeaturedPosts();
+  const posts = getAllPosts();
 
   return {
     props: { posts },
   };
 };
 
-export default HomePage;
+export default PostsPage;
