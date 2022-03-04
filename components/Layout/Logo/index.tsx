@@ -5,7 +5,7 @@ import classes from './index.module.scss';
 const Logo: React.FC = () => {
   return (
     <h2 className={classes.logo}>
-      <Link href="/">NextJS Blog</Link>
+      <Link href="/">Blog</Link>
     </h2>
   );
 };

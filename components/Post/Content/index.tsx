@@ -1,4 +1,5 @@
-import PostHeader from '../Header';
+import Header from './Header';
+import Markdown from './Markdown';
 import { PostDetail } from 'types/post';
 import classes from './index.module.scss';
 
@@ -11,7 +12,13 @@ const PostContent: React.FC<PostContentProps> = ({ post }) => {
 
   return (
     <article className={classes.content}>
-      <PostHeader title={post.title} image={imagePath} />
+      <Header
+        title={post.title}
+        tags={post.tags}
+        image={imagePath}
+        date={post.date}
+      />
+      <Markdown slug={post.slug} content={post.content} />
     </article>
   );
 };

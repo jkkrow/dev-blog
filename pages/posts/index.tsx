@@ -1,37 +1,63 @@
 import Head from 'next/head';
-import type { GetStaticProps, InferGetStaticPropsType } from 'next';
+import type { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import { useRouter } from 'next/router';
 import { Fragment } from 'react';
 
 import PostGrid from 'components/Post/Grid';
 import { Post } from 'types/post';
-import { getAllPosts } from 'lib/posts-util';
+import { getAllPosts, getPostsByTag } from 'lib/posts-util';
 
 interface Props {
   posts: Post[];
+  loading: boolean;
 }
 
 const PostsPage = ({
   posts,
-}: InferGetStaticPropsType<typeof getStaticProps>) => {
+  loading,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  const { query } = useRouter();
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <Fragment>
       <Head>
-        <title>All Posts</title>
+        <title>{query.tag ? `Posts - #${query.tag}` : 'All Posts'}</title>
         <meta
           name="description"
           content="A list of web development related posts"
         />
       </Head>
-      <PostGrid posts={posts} label="All Posts" />
+      <PostGrid
+        posts={posts}
+        label={query.tag ? `#${query.tag}` : 'All Posts'}
+      />
     </Fragment>
   );
 };
 
-export const getStaticProps: GetStaticProps<Props> = async () => {
-  const posts = getAllPosts();
+export const getServerSideProps: GetServerSideProps<Props> = async ({
+  query,
+}) => {
+  if (!query) {
+    return {
+      props: { posts: [], loading: true },
+    };
+  }
 
+  if (!query.tag) {
+    const posts = getAllPosts();
+    return {
+      props: { posts, loading: false },
+    };
+  }
+
+  const posts = getPostsByTag(query.tag);
   return {
-    props: { posts },
+    props: { posts, loading: false },
   };
 };
 

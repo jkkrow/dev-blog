@@ -1,0 +1,35 @@
+@use '../index.module.scss';
+
+.header {
+  position: relative;
+}
+
+.info {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  gap: 1rem;
+  color: var(--text-900);
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(10px);
+
+  h1 {
+    font-size: 4rem;
+  }
+
+  time {
+    font-size: 1.7rem;
+  }
+}
+
+.tags {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+}

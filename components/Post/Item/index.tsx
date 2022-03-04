@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import Image from 'next/image';
 
+import PostDate from '../UI/Date';
+import Tags from '../UI/Tags';
 import { Post } from 'types/post';
 import classes from './index.module.scss';
 
@@ -11,12 +13,6 @@ interface PostItemProps {
 const PostItem: React.FC<PostItemProps> = ({ post }) => {
   const imagePath = `/images/posts/${post.slug}/${post.image}`;
   const linkPath = `/posts/${post.slug}`;
-
-  const formattedDate = new Date(post.date).toLocaleDateString('en-US', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  });
 
   return (
     <li className={classes.item}>
@@ -33,8 +29,9 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
             <h3>{post.title}</h3>
           </a>
         </Link>
-        <time>{formattedDate}</time>
+        <PostDate date={post.date} />
         <p>{post.excerpt}</p>
+        <Tags tags={post.tags} />
       </div>
     </li>
   );

@@ -17,7 +17,7 @@ const HomePage = ({
   return (
     <Fragment>
       <Head>
-        <title>NextJS Blog</title>
+        <title>Blog</title>
         <meta name="description" content="Fullstack web development blog" />
         <link rel="icon" href="/favicon.ico" />
       </Head>

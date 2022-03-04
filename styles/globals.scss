@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans&family=Oswald:wght@700&family=Roboto:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@500&family=Oswald:wght@700&family=Roboto+Slab:wght@500&display=swap');
 
 * {
   padding: 0;
@@ -7,11 +7,8 @@
 }
 
 .theme-dark {
-  --bg-dark: hsl(0, 0%, 90%);
-  --bg-light: hsl(0, 0%, 10%);
-
-  --text-dark: hsl(0, 0%, 90%);
-  --text-light: hsl(0, 0%, 10%);
+  --bg-theme: hsl(0, 0%, 20%);
+  --text-theme: hsl(0, 0%, 80%);
 }
 
 html {
@@ -35,21 +32,21 @@ html {
   --text-800: hsl(0, 0%, 80%);
   --text-900: hsl(0, 0%, 90%);
 
-  --bg-dark: hsl(0, 0%, 10%);
-  --bg-light: hsl(0, 0%, 90%);
-
-  --text-dark: hsl(0, 0%, 10%);
-  --text-light: hsl(0, 0%, 90%);
+  --bg-theme: hsl(0, 0%, 90%);
+  --text-theme: hsl(0, 0%, 10%);
 
   font-size: 62.5%;
+
+  @media (max-width: 700px) {
+    font-size: 50%;
+  }
 }
 
 body {
   font-size: 1.6rem;
-  font-family: 'Open Sans', sans-serif;
-  color: var(--text-dark);
-  background-color: var(--bg-light);
-  transition: background-color 300ms ease-out;
+  font-family: 'Roboto Slab', sans-serif;
+  color: var(--text-100);
+  background-color: var(--bg-700);
 }
 
 h1,
@@ -70,6 +67,8 @@ ul {
 button {
   font: inherit;
   cursor: pointer;
+  border: none;
+  outline: none;
 }
 
 svg {
@@ -94,12 +93,32 @@ img {
   }
 
   &::after {
-    content: url('../assets/icons/image.svg');
+    content: url('/icons/image.svg');
     position: absolute;
     top: 50%;
     left: 50%;
     width: 10rem;
     height: 10rem;
     transform: translate(-50%, -50%);
+  }
+}
+
+::-webkit-scrollbar {
+  width: 20px;
+  background-color: var(--bg-900);
+
+  &-thumb {
+    background-clip: padding-box;
+    border: 5px solid transparent;
+    border-radius: 100px;
+    background-color: var(--bg-500);
+  }
+
+  &-thumb:hover {
+    background-color: var(--bg-600);
+  }
+
+  &-thumb:active {
+    background-color: var(--bg-700);
   }
 }

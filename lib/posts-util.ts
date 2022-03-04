@@ -16,15 +16,20 @@ export const getFeaturedPosts = (): Post[] => {
   return allPosts.filter((post) => post.isFeatured);
 };
 
+export const getPostsByTag = (tag: string | string[]): Post[] => {
+  const allPosts = getAllPosts();
+  const selectedTag = tag instanceof Array ? tag[0] : tag;
+  return allPosts.filter((post) => post.tags.includes(selectedTag));
+};
+
 export const getPostDetail = (slug: string): PostDetail => {
   const filePath = path.join(postsDir, `${slug}.md`);
   const fileContent = fs.readFileSync(filePath, 'utf-8');
   const { data, content } = matter(fileContent);
-
   return {
     slug,
     title: data.title,
-    tag: data.tag,
+    tags: data.tags,
     image: data.image,
     excerpt: data.excerpt,
     date: data.date,

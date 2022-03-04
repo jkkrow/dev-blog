@@ -1,8 +1,17 @@
 .content {
-  width: 90%;
-  max-width: 100rem;
+  width: 95%;
+  max-width: 120rem;
   margin: 4rem auto;
   overflow: hidden;
   border-radius: 10px;
+  font-size: 1.8rem;
+  color: var(--text-theme);
+  background-color: var(--bg-theme);
   box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+}
+
+.image {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
 }

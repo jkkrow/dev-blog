@@ -1,7 +1,7 @@
 export interface Post {
   slug: string;
   title: string;
-  tag: string[];
+  tags: string[];
   image: string;
   excerpt: string;
   date: string;

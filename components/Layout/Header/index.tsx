@@ -1,17 +1,14 @@
 import Link from 'next/link';
-import { useState } from 'react';
 
 import Logo from '../Logo';
+import Theme from '../Theme';
 import classes from './index.module.scss';
 
 const Header: React.FC = () => {
-  const [hideHeader, setHideHeader] = useState(false);
-
   return (
-    <header
-      className={`${classes.header}${hideHeader ? ` ${classes.hide}` : ''}`}
-    >
+    <header className={classes.header}>
       <Logo />
+      <Theme />
       <nav>
         <ul>
           <li>
