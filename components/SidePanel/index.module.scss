@@ -1,0 +1,28 @@
+.panel {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  padding: 1.5rem;
+  gap: 3rem;
+  border-radius: 100px;
+  background-color: var(--bg-900);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 300ms ease-out;
+
+  &.visible {
+    pointer-events: initial;
+    opacity: 1;
+  }
+
+  button {
+    position: relative;
+    width: 3rem;
+    height: 3rem;
+    background-color: inherit;
+    border-radius: 100px;
+  }
+}
