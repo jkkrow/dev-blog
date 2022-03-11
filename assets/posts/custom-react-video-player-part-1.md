@@ -13,7 +13,13 @@ However, browser's default video player doesn't look so good and vary depending 
 
 Another problem of HTML5 video is lack of support of ***ABR(Adaptive Bitrate Streaming)***. ABR is a crucial part of modern video streaming, which allows to play streamable video formats such as *HLS* and *MPEG*.
 
-In the series of tutorial, we're gonna create custom video player in react step by step. We'll build unique controls UI which is responsive in Part 1, hook up a video functionality to it in Part 2, and implement ABR feature in Part 3. You can find finished code of Part 1 in [here](https://github.com/jkkrow/custom-react-video-player).
+In the series of tutorial, we're gonna create custom video player in react step by step. 
+
+* Build unique controls UI which is responsive
+* Hook up video functionality to it
+* Implement ABR feature
+
+We'll start from building a resposive UI in Part 1. You can find finished code of Part 1 in [here](https://github.com/jkkrow/custom-react-video-player-layout).
 
 ## <a href="#get-started" name="get-started">Get Started</a>
 
@@ -29,19 +35,17 @@ Our final controls UI looks like below.
 
 First, we need a container `<div>` to wrap video and controls elements.
 
-```html
+```tsx
 <div className="vp-container">
   <video controls={false} />
-  // Controls
-  // Loader
-  // . . .
+  <div className="vp-controls"></div>
 </div>
 ```
 This container `<div>` is responsible for wrapping every components including `<video>` itself. Later, when we add video functionality to UI, this container will be the target element of *fullscreen* and *pip*.
 
 Before we implement controls UI, since we don't need the browser default one, set the `<video>` controls property `false`. The controls we create would have a structure like this:
 
-```html
+```tsx
 <div className="vp-controls">
   <div className="vp-controls__header">
     // Current Time
@@ -107,13 +111,13 @@ The container should have `relative` position so that controls can be placed bas
 
 *** *We will use this `vw` unit quite often in this tutorial. A Caveat is that `vw` unit is based on viewport width, which means CSS property based on `vw` unit will change depends on viewport size, not on video player itself. I'm assuming that this video player is used as a full size element(at least full width). If your use case is other than this, consider using % units or fixed value.(font size can only be responsive with viewport unit though)*
 
-*** *Also, since I don't want to bore you by explaining every CSS, which would also make the post really long, I will only explain important ones. You can find full CSS in both [starter files](https://github.com/jkkrow/custom-react-video-player-starter-files) and [finished code](https://github.com/jkkrow/custom-react-video-player).*
+*** *Also, since I don't want to bore you by explaining every CSS, which would also make the post really long, I will only explain important ones. You can find full CSS in both [starter files](https://github.com/jkkrow/custom-react-video-player-starter-files) and [finished code](https://github.com/jkkrow/custom-react-video-player-layout).*
 
 ## <a href="#time" name="time">Time</a>
 
 With styling layout finished, now let's start from header part of controls. Time UI will show current time and remained time of video. We will implement actual time in Part 2, so for now, let's just use dummy string.
 
-```html
+```tsx
 <div className="vp-controls__header">
   <time className="vp-time" dateTime="00:00">
     00:00
@@ -140,7 +144,7 @@ Since we already have responsive font size inside video container, we only need 
 
 Let's create progress bar. First, create a container for ranges.
 
-```html
+```tsx
 <div className="vp-progress">
   <div className="vp-progress__range"> // container 
 
@@ -167,7 +171,7 @@ We will put multiple progress bars overlapped. Therefore, our container should b
 
 To indicate video progress, we need multiple bars for different tasks: *background*, *current time*, and *buffer*. Also, we need a controls for seek. For that, we'll use `<input type="range">` element.
 
-```html
+```tsx
 <div className="vp-progress">
   <div className="vp-progress__range">
     <div className="vp-progress__range--background" />
@@ -221,7 +225,7 @@ What we want to do is to hide default browser `<input>` and replace its appearan
 
 We'll also show thumb like default range input for current progress when hovered.
 
-```html
+```tsx
 <div className="vp-progress__range--current">
   <div className="vp-progress__range--current__thumb" />
 </div>
@@ -229,7 +233,7 @@ We'll also show thumb like default range input for current progress when hovered
 
 ```css
 .vp-progress__range--current {
-  // . . .
+  . . .
   position: relative;
   display: flex;
   align-items: center;
@@ -253,7 +257,7 @@ We'll also show thumb like default range input for current progress when hovered
 
 The last thing we'll do in progress component is adding a tooltip which shows timeline of position where cursor is hovered. We'll implement full functionality of this in Part 2, so let's just do a basic styling for now.
 
-```html
+```tsx
 <div className="vp-progress">
   // progress range
   <span className="vp-progress__tooltip">
@@ -390,7 +394,7 @@ Do the same thing with `Skip`, `Rewind`, `Settings`, `Pip`, `Fullscreen` buttons
 
 In `Volume` component, we'll also use `Btn` component to toggling the video mute. But unlike other buttons, we also need a bar element to control video volume. Making bar is the same process you saw in [progress](#progress) section. Only difference is that you don't need an extra bar for buffer.
 
-```html
+```tsx
 <div className="vp-volume">
   <Btn onClick={onToggle}>
     <VolumeIcon />
@@ -433,7 +437,7 @@ What we're going to do is hide the volume bar initially, and scale it when hover
 
 ```css
 .vp-volume__range {
-  // . . .
+  . . .
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 200ms ease-out;
@@ -471,14 +475,12 @@ The dropdown will be opened whenever the settings button is clicked so let's hoo
 
 ```tsx
 const [displayDropdown, setDisplayDropdown] = useState(false);
+```
 
-// . . .
-
+```tsx
 <div className="vp-controls">
   <Dropdown on={displayDropdown} />
-  
-  // . . .
-
+  . . .
   <Settings onToggle={() => setDisplayDropdown((prev) => !prev)} />
 ```
 
@@ -555,13 +557,13 @@ For better explanation, I'll show you an example with dummy playback rate and re
 
 ```tsx
 const [isIndex, setIsIndex] = useState(true);
+```
 
-// . . .
-
+```tsx
 <div className="vp-dropdown">
   <CSSTransition
     in={isIndex}
-    classNames="menu-index"
+    classNames="vp-menu-index"
     timeout={300}
     mountOnEnter
     unmountOnExit
@@ -571,25 +573,25 @@ const [isIndex, setIsIndex] = useState(true);
 
   <CSSTransition
     in={!isIndex}
-    classNames="menu-main"
+    classNames="vp-menu-main"
     timeout={300}
     mountOnEnter
     unmountOnExit
   >
-    {menuList}
+    {mainMenu}
   </CSSTransition>
 </div>
 ```
 
-Show index menu if `isIndex` is `true`, and show main menu if `false`. Index menu:
+The initial menu of dropdown is index menu and if one of the index menu item is clicked, it's changed to main menu which content is depend on the type of user clicked.
 
 ```tsx
-const [activeMenu, setActiveMenu] = useState<'resolution' | 'speed'>('speed');
+const [activeType, setActiveType] = useState<'speed' | 'resolution'>('speed');
 
 
-const selectMenuHandler = (activeMenu: 'resolution' | 'speed') => {
+const selectMenuHandler = (type: 'resolution' | 'speed') => {
   setIsIndex(false);
-  setActiveMenu(activeMenu);
+  setActiveType(type);
 };
 
 const indexMenu = (
@@ -602,27 +604,278 @@ const indexMenu = (
         <span>Speed</span>
         <span>x 1</span>
       </li>
+      <li
+        className="vp-dropdown__item"
+        onClick={() => selectMenuHandler('resolution')}
+      >
+        <span>Resolution</span>
+        <span>1080p</span>
+      </li>
     </ul>
   </div>
-)
+);
 ```
 
-Main menu:
+In main menu, the list of options are displayed. As I said, we'll add more functional logic later, and for now, we only go back to index menu when one of options is clicked.
 
 ```tsx
 const mainMenu = (
-  
-)
+  <div className="vp-dropdown__menu">
+    <div className="vp-dropdown__label" onClick={() => setIsIndex(true)}>
+      <ArrowLeftIcon />
+      <span>
+        {activeType === 'speed' && 'Speed'}
+        {activeType === 'resolution' && 'Resolution'}
+      </span>
+    </div>
+    <ul className="vp-dropdown__list">
+      {activeType === 'speed' &&
+        [0.5, 0.75, 1, 1.25, 1.5].map((playbackRate) => (
+          <li
+            key={playbackRate}
+            className={`vp-dropdown__item${
+              playbackRate === 1 ? ' active' : ''
+            }`}
+            onClick={() => setIsIndex(true)}
+          >
+            {playbackRate}
+          </li>
+        ))}
+      {activeType === 'resolution' &&
+        [540, 720, 1080].map((resolution) => (
+          <li
+            key={resolution}
+            className={`vp-dropdown__item${
+              resolution === 1080 ? ' active' : ''
+            }`}
+            onClick={() => setIsIndex(true)}
+          >
+            {resolution}
+          </li>
+        ))}
+    </ul>
+  </div>
+);
 ```
-  
+
+Now we want to add animation when swiching between index and main menu. 
+
+```css
+.vp-dropdown__menu {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  transition: transform 300ms ease;
+}
+
+.vp-menu-index-enter {
+  transform: translateX(-110%);
+}
+.vp-menu-index-enter-active {
+  transform: translateX(0%);
+}
+.vp-menu-index-exit-active {
+  transform: translateX(-110%);
+}
+.vp-menu-main-enter {
+  transform: translateX(110%);
+}
+.vp-menu-main-enter-active {
+  transform: translateX(0%);
+}
+.vp-menu-main-exit-active {
+  transform: translateX(110%);
+}
+```
 
 ### Calculate height
 
+Although we implemented transition to switching effect, the height of dropdown is not changing smoothly. Currently, our dropdown height is height of menu, and the time that menu height is change is when the menu is mounted, which is the `timeout` we set to `CSSTransition` of menu.
+
+We can change this by setting the dropdown height automatically changed whenever the menu is entering. We should hook up calculating height function to `onEnter` property of `CSSTransition`.
+
+```tsx
+<CSSTransition
+  . . .
+  onEnter={calcHeight}
+>
+  {indexMenu}
+</CSSTransition>
+
+<CSSTransition
+  . . .
+  onEnter={calcHeight}
+>
+  {mainMenu}
+</CSSTransition>
+```
+
+We can access to child element of `CSSTransition` as a argument of `onEnter` function.
+
+```tsx
+const [dropdownHeight, setDropdownHeight] = useState<'initial' | number>('initial');
+
+const calcHeight = (element: HTMLElement) => {
+  setDropdownHeight(element.offsetHeight);
+};
+```
+
+```tsx
+<div className="vp-dropdown" style={{ height: dropdownHeight }}>
+```
+
+Transition height in CSS:
+
+```css
+.vp-dropdown {
+  . . .
+  transition: opacity 200ms ease-out, height 300ms ease-out;
+}
+```
+
+We should set the height when the dropdown is mounted as well. To access to dropdown element, create `ref` and connect to dropdown element.
+
+```tsx
+const dropdownRef = useRef<HTMLDivElement>(null);
+
+useEffect(() => {
+  if (!on) return;
+
+  const dropdown = dropdownRef.current!;
+  const dropdownMenu = dropdown.firstChild as HTMLElement;
+
+  setDropdownHeight(dropdownMenu?.offsetHeight || 'initial');
+}, [on]);
+```
+
+```tsx
+<div
+  className="vp-dropdown"
+  ref={dropdownRef}
+  style={{ height: dropdownHeight }}
+>
+```
+
+Finally, set the dropdown height to `initial` when unmounted. Also set the `isIndex` to `true` so that user always see the index menu first whenever dropdown is mounted again, even after the dropdown is closed with main menu.
+
+```tsx
+const dropdownExitedHandler = () => {
+  setIsIndex(true);
+  setDropdownHeight('initial');
+}
+```
+
+```tsx
+<CSSTransition
+  in={on}
+  classNames="vp-dropdown"
+  timeout={200}
+  mountOnEnter
+  unmountOnExit
+  onExited={dropdownExitedHandler}
+>
+```
+
 ### Ouside Click handler
 
+It would be better user experience if we can close the dropdown by clicking wherever the outside of it. For that, we'll add a click event listener to document whenever the dropdown is mounted.
 
-## <a href="#loader" name="loader">Loader</a>
+First, create a state which is referencing *mounted* state of dropdown. Hook up the state to `CSSTransition` cycle of dropdown.
+
+```tsx
+const [isMounted, setIsMounted] = useState(false);
+
+const dropdownEnteredHandler = () => {
+  setIsMounted(true);
+};
+
+const dropdownExitedHandler = () => {
+  setIsMounted(false);
+  setIsIndex(true);
+  setDropdownHeight('initial');
+};
+```
+```tsx
+<CSSTransition
+  in={on}
+  classNames="vp-dropdown"
+  timeout={200}
+  mountOnEnter
+  unmountOnExit
+  onEntered={dropdownEnteredHandler}
+  onExited={dropdownExitedHandler}
+>
+```
+
+Then add a event listener inside of `useEffect` hook that is triggered on `isMounted` state.
+
+```tsx
+useEffect(() => {
+  if (!isMounted) return;
+
+  const outsideClickHandler = (event: MouseEvent) => {
+    // Close dropdown if the click event happened outside of it
+  };
+
+  document.addEventListener('click', outsideClickHandler);
+
+  return () => {
+    document.removeEventListener('click', outsideClickHandler);
+  };
+}, [isMounted]);
+```
+
+In the `outsideClickHandler`, we should check if the target element contains the dropdown element. We've already created `dropdownRef` so let's use it again.
+
+```tsx
+const outsideClickHandler = (event: MouseEvent) => {
+  if (!isMounted || !dropdownRef || !dropdownRef.current) return;
+  if (!dropdownRef.current.contains(event.target as Node)) {
+    // Close dropdown
+  }
+};
+```
+
+To close dropdown, we need to set the `displayDropdown` state in the `VideoPlayer` component to `false`. Therefore, we'll pass a `setDisplayDropdown` function to `Dropdown` component.
+
+#### VideoPlayer.tsx
+
+```tsx
+<Dropdown on={displayDropdown} onClose={setDisplayDropdown} />
+```
+
+#### Dropdown.tsx
+
+```tsx
+interface DropdownProps {
+  on: boolean;
+  onClose: (on: boolean) => void;
+}
+
+const Dropdown: React.FC<DropdownProps> = ({ on, onClose }) => {
+  useEffect(() => {
+    if (!isMounted) return;
+
+    const outsideClickHandler = (event: MouseEvent) => {
+      if (!isMounted || !dropdownRef || !dropdownRef.current) return;
+      if (!dropdownRef.current.contains(event.target as Node)) {
+        onClose(false);
+      }
+    };
+
+    document.addEventListener('click', outsideClickHandler);
+
+    return () => {
+      document.removeEventListener('click', outsideClickHandler);
+    };
+  }, [isMounted, onClose]);
+}
+```
 
 ## <a href="#conclusion" name="conclusion">Conclusion</a>
 
-Now we've finished Part 1 of 3 of building custom react video player. Let's hook up video functionality to it in Part 2.
+Alright! That's all for now. We've just built quite fancy looking custom UI of video player which is also responsive.
+
+That was quite a lot of work, but this is only Part 1 of 3. Still, there are lots of work to do. Now we've finished building barebone of video player, let's continue to Part 2 to add some actual logics to what we've just built.
+
+Before moving on, if you want to review your code with finished one, don't forget to check out [Github](https://github.com/jkkrow/custom-react-video-player-layout).
