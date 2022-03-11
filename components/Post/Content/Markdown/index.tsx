@@ -19,6 +19,8 @@ import bash from 'react-syntax-highlighter/dist/cjs/languages/prism/bash';
 import { AppContext } from 'context/AppContext';
 import classes from './index.module.scss';
 
+darkTheme['class-name'].textDecoration = 'none';
+
 SyntaxHighlighter.registerLanguage('javascript', javascript);
 SyntaxHighlighter.registerLanguage('typescript', typescript);
 SyntaxHighlighter.registerLanguage('jsx', jsx);

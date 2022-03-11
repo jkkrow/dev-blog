@@ -7,7 +7,7 @@ import type {
 import { Fragment } from 'react';
 
 import PostContent from 'components/Post/Content';
-import SidePanel from 'components/SidePanel';
+import Panel from 'components/Panel';
 import { PostDetail } from 'types/post';
 import { getAllPosts, getPostDetail } from 'lib/posts-util';
 
@@ -25,7 +25,7 @@ const PostDetailPage = ({
         <meta name="description" content={post.excerpt} />
       </Head>
       <PostContent post={post} />
-      <SidePanel />
+      <Panel />
     </Fragment>
   );
 };

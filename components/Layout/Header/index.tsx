@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { useContext, useEffect, useRef } from 'react';
+import { useContext } from 'react';
 
 import Logo from '../Logo';
 import Theme from '../../Theme';
@@ -7,21 +7,10 @@ import { AppContext } from 'context/AppContext';
 import classes from './index.module.scss';
 
 const Header: React.FC = () => {
-  const { setIsIntersecting } = useContext(AppContext);
-
-  const headerRef = useRef<HTMLHeadElement>(null);
-
-  useEffect(() => {
-    if (!headerRef.current) return;
-    const observer = setIsIntersecting(headerRef.current);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [setIsIntersecting]);
+  const { ref } = useContext(AppContext);
 
   return (
-    <header className={classes.header} ref={headerRef}>
+    <header className={classes.header} ref={ref}>
       <Logo />
       <Theme />
       <nav>

@@ -13,38 +13,33 @@ However, browser's default video player doesn't look so good and vary depending 
 
 Another problem of HTML5 video is lack of support of ***ABR(Adaptive Bitrate Streaming)***. ABR is a crucial part of modern video streaming, which allows to play streamable video formats such as *HLS* and *MPEG*.
 
-In the series of tutorial, we're gonna create responsive custom controls in Part 1, connect its UI to video functionality in Part 2, and implement ABR feature in Part 3. You can find finished code of Part 1 in [here](https://github.com/jkkrow/custom-react-video-player)
+In the series of tutorial, we're gonna create custom video player in react step by step. We'll build unique controls UI which is responsive in Part 1, hook up a video functionality to it in Part 2, and implement ABR feature in Part 3. You can find finished code of Part 1 in [Github](https://github.com/jkkrow/custom-react-video-player).
 
-## Get Started
+## <a href="#get-started" name="get-started">Get Started</a>
 
 We will use React library to implement video player since it allows you to create elements in declarative way and makes things much easier. I've preprared [starter files](https://github.com/jkkrow/custom-react-video-player-starter-files) to start on, which include stylesheets and icons you need. To start, download or clone repository, and open the project directory in your text editor.
 
-Then run `npm install` to install all dependencies and `npm start` to start project. In project folder, you'll find a `App` component with `VideoPlayer` component with public video source link. `VideoPlayer` component is placed in **components/Player** folder and is currently returning empty div. Let's start from there!
+Then run `npm install` to install all dependencies and `npm start` to start project. In project folder, you'll find a `App` component with `VideoPlayer` component. `VideoPlayer` component is placed in `components/Player` folder and is currently returning empty div. Let's start from there!
 
-## Layout
+## <a href="#layout" name="layout">Layout</a>
 
 Our final controls UI looks like below.
 
-<iframe src="https://codesandbox.io/embed/github/jkkrow/custom-react-video-player/tree/main/?fontsize=14&hidenavigation=1&theme=dark&view=preview"
-     style="width:100%; aspect-ratio:16/9; border:0; border-radius: 4px; overflow:hidden;"
-     title="video-player"
-     allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
-     sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
-   ></iframe>
+<iframe src="https://codesandbox.io/embed/github/jkkrow/custom-react-video-player-layout/tree/main/?fontsize=14&hidenavigation=1&theme=dark&view=preview" style="width:100%; min-height:500px; aspect-ratio:16/9; border:0; border-radius: 4px; overflow:hidden;" title="custom-react-video-player-layout" allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking" sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"></iframe>
 
 First, we need a container `<div>` to wrap video and controls elements.
 
 ```html
 <div className="vp-container">
-  <video src={src} controls={false} />
+  <video controls={false} />
   // Controls
   // Loader
   // . . .
 </div>
 ```
-This container `<div>` is responsible for wrapping every components including `<video>` itself. Later, when we add video functionality to UI, this container will be the target element of ***fullscreen*** and ***pip***.
+This container `<div>` is responsible for wrapping every components including `<video>` itself. Later, when we add video functionality to UI, this container will be the target element of *fullscreen* and *pip*.
 
-Before we implement controls UI, since we don't need the browser default one, set the `<video>` controls property `false`. The controls we create will have a structure like this:
+Before we implement controls UI, since we don't need the browser default one, set the `<video>` controls property `false`. The controls we create would have a structure like this:
 
 ```html
 <div className="vp-controls">
@@ -71,7 +66,7 @@ Before we implement controls UI, since we don't need the browser default one, se
 </div>
 ```
 
-The **header** part of controls will have time and progress UI and the **body** part of controls will have buttons that controls video. The **body** part will be divided by 3 `<div>` sections to align the buttons more nicely.
+The header part of controls will have time and progress UI and the body part of controls will have buttons that controls video. The body part will be divided by 3 `<div>` sections to align the buttons more nicely.
 
 And here is related CSS:
 
@@ -110,21 +105,184 @@ The container should have `relative` position so that controls can be placed bas
 
 `clamp()` is very helpful when making a responsive element. it takes minimum, preferred, maximum value as parameter. In above code, our font size will be minimum 1.2rem size, increased along with 2vw, up to 2rem. Same thing happens with controls height. Thanks to `clamp()`, there will be no `@media` query when making our player.
 
-*** ***We will use this `vw` unit quite often in this tutorial. A Caveat is that `vw` unit is based on viewport width, which means CSS property based on `vw` unit will change depends on viewport size, not on video player itself. I am assuming that this video player is used as a full size element(at least full width). If your use case is other than this, consider using % units or fixed value.(font size can only be responsive with viewport unit though)***
+*** *We will use this `vw` unit quite often in this tutorial. A Caveat is that `vw` unit is based on viewport width, which means CSS property based on `vw` unit will change depends on viewport size, not on video player itself. I'm assuming that this video player is used as a full size element(at least full width). If your use case is other than this, consider using % units or fixed value.(font size can only be responsive with viewport unit though)*
 
-*** ***Also, since I don't want to bore you by explaining every CSS, which would also make the post really long, I will only explain important ones. You can find full CSS in [Github](https://github.com/jkkrow/custom-react-video-player).***
+*** *Also, since I don't want to bore you by explaining every CSS, which would also make the post really long, I will only explain important ones. You can find full CSS in [Github](https://github.com/jkkrow/custom-react-video-player).*
 
-## Time
+## <a href="#time" name="time">Time</a>
 
-With styling layout finished, now let's start from **header** part of controls. 
+With styling layout finished, now let's start from header part of controls. Time UI will show current time and remained time of video. We will implement actual time in Part 2, so for now, let's just use dummy string.
 
+```html
+<div className="vp-controls__header">
+  <time className="vp-time" dateTime="00:00">
+    00:00
+  </time>
 
-## Progress
+  // Progress
 
+  <time className="vp-time" dateTime="00:00">
+    00:00
+  </time>
+</div>
+```
 
-## Button UI
+Since we already have responsive font size inside video container, we only need to apply responsive width for UI, and center the text.
 
-Next thing we need to do is  on buttons inside of the **body** part of controls. For consistant style and reducing code duplication, we'll create `Btn` component to wrap every button UI in controls.
+```css
+.vp-time {
+  width: clamp(10rem, 20%, 20rem);
+  text-align: center;
+}
+```
+
+## <a href="#progress" name="progress">Progress</a>
+
+Let's create progress bar. First, create a container for ranges.
+
+```html
+<div className="vp-progress">
+  <div className="vp-progress__range"> // container 
+
+  </div>
+</div>
+```
+
+We will put multiple progress bars overlapped. Therefore, our container should be `relative` position.
+
+```css
+.vp-progress {
+  width: 100%;
+  height: 100%;
+}
+
+.vp-progress__range {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+```
+
+To indicate video progress, we need multiple bars for different tasks: *background*, *current time*, and *buffer*. Also, we need a controls for seek. For that, we'll use `<input type="range">` element.
+
+```html
+<div className="vp-progress">
+  <div className="vp-progress__range">
+    <div className="vp-progress__range--background" />
+    <div className="vp-progress__range--buffer" />
+    <div className="vp-progress__range--current" />
+    <input
+      className="vp-progress__range--seek"
+      type="range"
+      step="any"
+    />
+  </div>
+</div>
+```
+
+All of these bars should be `absolute` position.
+
+```css
+.vp-progress__range--background,
+.vp-progress__range--buffer,
+.vp-progress__range--current,
+.vp-progress__range--seek {
+  position: absolute;
+  width: 100%;
+  height: 10%;
+  border-radius: 50px;
+}
+
+.vp-progress__range--background {
+  background-color: #858585;
+}
+
+.vp-progress__range--buffer {
+  background-color: #6b0400;
+  transition: width 200ms ease-out;
+}
+
+.vp-progress__range--current {
+  background-color: #cd131c;
+}
+```
+
+What we want to do is to hide default browser `<input>` and replace its appearance with custom styled `<div>` elements. Also, for better user accessability, let's increase the height of seek bar.
+
+```css
+.vp-progress__range--seek {
+  height: 100%;
+  cursor: pointer;
+  opacity: 0; // hide the default input range
+}
+```
+
+We'll also show thumb like default range input for current progress when hovered.
+
+```html
+<div className="vp-progress__range--current">
+  <div className="vp-progress__range--current__thumb" />
+</div>
+```
+
+```css
+.vp-progress__range--current {
+  // . . .
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.vp-progress__range--current__thumb {
+  position: absolute;
+  right: 0;
+  width: clamp(1.5rem, 3vw, 2.5rem);
+  height: clamp(1.5rem, 3vw, 2.5rem);
+  border-radius: 50px;
+  background-color: #cd131c;
+  transform: translateX(50%) scale(0);
+  transition: transform 200ms ease-out;
+}
+
+.vp-progress__range:hover .vp-progress__range--current__thumb {
+  transform: translateX(50%) scale(1);
+}
+```
+
+The last thing we'll do in progress component is adding a tooltip which shows timeline of position where cursor is hovered. We'll implement full functionality of this in Part 2, so let's just do a basic styling for now.
+
+```html
+<div className="vp-progress">
+  // progress range
+  <span className="vp-progress__tooltip">
+    00:00
+  </span>
+</div>
+```
+
+```css
+.vp-progress__tooltip {
+  position: absolute;
+  bottom: clamp(4rem, 5vw, 5rem);
+  padding: 0.5rem 0.75rem;
+  background-color: rgba(0, 0, 0, 0.8);
+  border-radius: 5px;
+  font-weight: 700;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(-50%);
+  transition: opacity 200ms ease-out;
+}
+.vp-progress:hover .vp-progress__tooltip {
+  opacity: 1;
+}
+```
+
+## <a href="#button-ui" name="button-ui">Button UI</a>
+
+Now we've finished the header section of controls. Next thing we need to do is styling buttons inside of the body part of controls. For consistant style and reducing code duplication, we'll create `Btn` component to wrap every button UI in controls.
 
 ```tsx
 interface BtnProps {
@@ -133,16 +291,11 @@ interface BtnProps {
 }
 
 const Btn: React.FC<BtnProps> = ({ label, onClick, children }) => {
-  const preventDefault = (e: React.KeyboardEvent) => {
-    e.preventDefault();
-  };
-
   return (
     <button
-      className={`vp-controls__btn${label ? ' label' : ''}`}
+      className={`vp-btn${label ? ' label' : ''}`}
       data-label={label}
       onClick={onClick}
-      onKeyDown={preventDefault}
     >
       {children}
     </button>
@@ -150,14 +303,12 @@ const Btn: React.FC<BtnProps> = ({ label, onClick, children }) => {
 };
 ```
 
-`label` props is attached to **pseudo element** of `button` and used to show operation of button when hovered such as ***Play*** or ***Pause*** and ***Fullscreen*** or ***Fullscreen off***.
-
-The reason we define `event.preventDefault()` to `keyDown` event is that `button` element is focusable element. When button is focused, it responds to keystrokes. This can trigger unwanted effect after we add a event listener to key event to control video player with keystrokes. For example, if user press ***spacebar*** to pause a video and one of the buttons is focused, it will be triggered which is not optimal user experience.
+`label` props is attached to **pseudo element** of `button` and used to show operation of button when hovered such as *Play* or *Pause* and *Fullscreen* or *Fullscreen off*.
 
 Related CSS:
 
 ```css
-.vp-controls__btn {
+.vp-btn {
   position: relative;
   display: flex;
   justify-content: center;
@@ -170,14 +321,14 @@ Related CSS:
   aspect-ratio: 1;
 }
 
-.vp-controls__btn::before {
+.vp-btn::before {
   content: attr(data-label);
   position: absolute;
   display: none;
-  top: clamp(-6rem, -150%, -2rem);
+  bottom: 100%;
   width: max-content;
-  padding: 0.5rem 1rem;
-  color: #fff;
+  padding: 0.5rem 0.75rem;
+  border-radius: 5px;
   background-color: rgba(0, 0, 0, 0.8);
   font-weight: 600;
   pointer-events: none;
@@ -185,33 +336,20 @@ Related CSS:
   transition: opacity 200ms ease-out;
 }
 
-.vp-controls__btn.label::before {
+.vp-btn.label::before {
   display: block;
 }
 
-.vp-controls__btn:hover::before {
+.vp-btn:hover::before {
   opacity: 1;
 }
 ```
 
-With Button UI, we simply need to wrap each controls button with it.
+With Button UI, we simply need to wrap each controls button with it. All you need to do is put svg icon inside `Btn` component. You can find it in icons folder in starter files I provided.
 
-#### Volume.tsx
-
+To use svg in React,
 ```tsx
-interface VolumeProps {
-  onToggle: () => void
-}
-
-const Volume: React.FC<VolumeProps> => ({ onToggle }) => {
-  return (
-    <div className="vp-controls__volume">
-      <Btn>
-        <VolumeIcon />
-      </Btn>
-    </div>
-  )
-}
+import { ReactComponent as Icon } from '<icon-path>/icon.svg';
 ```
 
 #### Playback.tsx
@@ -223,7 +361,7 @@ interface PlaybackProps {
 
 const Playback: React.FC<PlaybackProps> => ({ onToggle }) => {
   return (
-    <div className="vp-controls__playback">
+    <div className="vp-controls__playback" onClick={onToggle}>
       <Btn label="Play">
         <PlayIcon />
       </Btn>
@@ -239,7 +377,7 @@ Do the same thing with `Skip`, `Rewind`, `Settings`, `Pip`, `Fullscreen` buttons
 ```tsx
 <div className="vp-controls__body">
   <div>
-    <Volume />
+    // Volume
   </div>
   <div>
     <Rewind />
@@ -254,7 +392,87 @@ Do the same thing with `Skip`, `Rewind`, `Settings`, `Pip`, `Fullscreen` buttons
 </div>
 ```
 
-## Volume
+## <a href="#volume" name="volume">Volume</a>
 
+In `Volume` component, we'll also use `Btn` component to toggling the video mute. But unlike other buttons, we also need a bar element to control video volume. Making bar is the same process you saw in [progress](#progress) section. Only difference is that you don't need an extra bar for buffer.
 
-## Settings
+```html
+<div className="vp-volume">
+  <Btn onClick={onToggle}>
+    <VolumeIcon />
+  </Btn>
+
+  <div className="vp-volume__range">
+    // background
+    // current volume
+    // seek
+  </div>
+</div>
+```
+
+Therefore, I'll skip the details of it. Instead, let's implement hover effect to volume UI.
+
+First, make the volume container position to `relative` and volume range position to `absolute` so we can position both button and range center.
+
+```css
+.vp-volume {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-width: 12rem;
+  height: 100%;
+}
+
+.vp-volume__range {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  left: 50%;
+  width: clamp(6rem, 10vw, 15rem);
+  height: clamp(0.5rem, 1vw, 1rem);
+}
+```
+
+What we're going to do is hide the volume bar initially, and scale it when hovered. Also, we want the button to move left in order to match the balance.
+
+```css
+.vp-volume__range {
+  // . . .
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 200ms ease-out;
+}
+
+.vp-volume button {
+  width: max-content;
+  transition: transform 200ms ease-out;
+}
+```
+
+Then, add hover effect to both button and range.
+
+```css
+.vp-volume:hover .vp-volume__range {
+  transform: scaleX(1);
+}
+
+.vp-volume:hover button {
+  transform: translateX(clamp(-5rem, -4vw, -2.5rem));
+}
+```
+
+You can see that we not only can use `clamp()` function to size of property, but also transition value. Also, we used negative value to move to opposite direction. In above code, our button will move left by 2.5rem to 5rem depends on viewport width size.
+
+## <a href="#dropdown" name="dropdown">Dropdown</a>
+
+Next thing we're going to build is dropdown of video settings. There will be a list of settings that user can choose such as playback rate and resolution.
+
+We want to build it as multi-stage dropdown with animation like the one you can see in YouTube. to make it, we'll use 3rd party library called `react-transition-group`.
+
+## <a href="#loader" name="loader">Loader</a>
+
+## <a href="#conclusion" name="conclusion">Conclusion</a>
+
+Now we've finished Part 1 of 3 of building custom react video player. Let's hook up video functionality to it in Part 2.

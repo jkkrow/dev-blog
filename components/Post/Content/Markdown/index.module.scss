@@ -13,7 +13,30 @@
   }
 
   a {
+    color: var(--text-theme);
     text-decoration: underline;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    a {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+
+      &::after {
+        content: '#';
+        margin-left: 1rem;
+        opacity: 0;
+        transition: opacity 200ms ease-out;
+      }
+
+      &:hover::after {
+        opacity: 1;
+      }
+    }
   }
 
   pre {

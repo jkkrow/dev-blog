@@ -1,12 +1,27 @@
 import Image from 'next/image';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 import Theme from 'components/Theme';
 import { AppContext } from 'context/AppContext';
 import classes from './index.module.scss';
 
-const SidePanel: React.FC = () => {
-  const { isIntersecting } = useContext(AppContext);
+const Panel: React.FC = () => {
+  const [isIntersecting, setIsIntersecting] = useState(true);
+  const { ref } = useContext(AppContext);
+
+  useEffect(() => {
+    if (!ref || !ref.current) return;
+
+    const observer = new IntersectionObserver(([entry], observer) => {
+      setIsIntersecting(entry.isIntersecting);
+    });
+
+    observer.observe(ref.current);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [ref]);
 
   const scrollTopHandler = () => {
     document.documentElement.scrollTo({ top: 0, behavior: 'smooth' });
@@ -26,4 +41,4 @@ const SidePanel: React.FC = () => {
   );
 };
 
-export default SidePanel;
+export default Panel;

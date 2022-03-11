@@ -1,22 +1,21 @@
-import { createContext, useState, useEffect, useCallback } from 'react';
+import { createContext, useState, useEffect, useCallback, useRef } from 'react';
 
 export type Theme = 'light' | 'dark';
 
 export const AppContext = createContext<{
   theme: Theme | null;
-  isIntersecting: boolean;
+  ref: React.RefObject<HTMLElement> | null;
   setTheme: () => void;
-  setIsIntersecting: (element: HTMLElement) => IntersectionObserver;
 }>({
   theme: null,
-  isIntersecting: true,
+  ref: null,
   setTheme: () => {},
-  setIsIntersecting: () => new IntersectionObserver(() => {}),
 });
 
 const AppContextProvider: React.FC = ({ children }) => {
   const [theme, setTheme] = useState<Theme | null>(null);
-  const [isIntersecting, setIsIntersecting] = useState(true);
+
+  const contextRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const storedTheme = localStorage.getItem('theme') as Theme | null;
@@ -33,23 +32,12 @@ const AppContextProvider: React.FC = ({ children }) => {
     localStorage.setItem('theme', changedTheme);
   }, [theme]);
 
-  const intersectObserveHandler = useCallback((element: HTMLElement) => {
-    const observer = new IntersectionObserver(([entry], observer) => {
-      setIsIntersecting(entry.isIntersecting);
-    });
-
-    observer.observe(element);
-
-    return observer;
-  }, []);
-
   return (
     <AppContext.Provider
       value={{
         theme,
-        isIntersecting,
+        ref: contextRef,
         setTheme: toggleThemeHandler,
-        setIsIntersecting: intersectObserveHandler,
       }}
     >
       {children}

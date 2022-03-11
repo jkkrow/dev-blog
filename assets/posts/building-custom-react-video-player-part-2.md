@@ -80,6 +80,23 @@ And code structure looks like this.
 </div>
 ```
 
+## Progress
+
+Since `<input>` is focusable element, we should add `event.preventDefault()` function to its `keyDown` event. Because later we'll add event listener to key event to control video with keyboard. Keypress (*eg. arrow key pressed*) with `<input>` focused might cause unwanted result.
+
+```tsx
+const preventDefault = (e: React.KeyboardEvent) => {
+  e.preventDefault();
+};
+
+// . . .
+
+<input
+  className="vp-progress__range--seek"
+  onKeyDown={preventDefault}
+/>
+```
+
 ## Button UI
 
 For consistant style and reducing code duplication, create `Btn` component to wrap every button UI in controls.

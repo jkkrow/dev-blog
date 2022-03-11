@@ -1,11 +1,10 @@
 .panel {
   position: fixed;
   display: flex;
-  flex-direction: column;
-  bottom: 1.5rem;
-  right: 1.5rem;
-  padding: 1.5rem;
-  gap: 3rem;
+  bottom: 1rem;
+  right: 3rem;
+  padding: 1rem;
+  gap: 2.5rem;
   border-radius: 100px;
   background-color: var(--bg-900);
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
@@ -20,8 +19,8 @@
 
   button {
     position: relative;
-    width: 3rem;
-    height: 3rem;
+    width: 2.5rem;
+    height: 2.5rem;
     background-color: inherit;
     border-radius: 100px;
   }
