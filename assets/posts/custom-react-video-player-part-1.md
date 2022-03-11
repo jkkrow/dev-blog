@@ -13,7 +13,7 @@ However, browser's default video player doesn't look so good and vary depending 
 
 Another problem of HTML5 video is lack of support of ***ABR(Adaptive Bitrate Streaming)***. ABR is a crucial part of modern video streaming, which allows to play streamable video formats such as *HLS* and *MPEG*.
 
-In the series of tutorial, we're gonna create custom video player in react step by step. We'll build unique controls UI which is responsive in Part 1, hook up a video functionality to it in Part 2, and implement ABR feature in Part 3. You can find finished code of Part 1 in [Github](https://github.com/jkkrow/custom-react-video-player).
+In the series of tutorial, we're gonna create custom video player in react step by step. We'll build unique controls UI which is responsive in Part 1, hook up a video functionality to it in Part 2, and implement ABR feature in Part 3. You can find finished code of Part 1 in [here](https://github.com/jkkrow/custom-react-video-player).
 
 ## <a href="#get-started" name="get-started">Get Started</a>
 
@@ -107,7 +107,7 @@ The container should have `relative` position so that controls can be placed bas
 
 *** *We will use this `vw` unit quite often in this tutorial. A Caveat is that `vw` unit is based on viewport width, which means CSS property based on `vw` unit will change depends on viewport size, not on video player itself. I'm assuming that this video player is used as a full size element(at least full width). If your use case is other than this, consider using % units or fixed value.(font size can only be responsive with viewport unit though)*
 
-*** *Also, since I don't want to bore you by explaining every CSS, which would also make the post really long, I will only explain important ones. You can find full CSS in [Github](https://github.com/jkkrow/custom-react-video-player).*
+*** *Also, since I don't want to bore you by explaining every CSS, which would also make the post really long, I will only explain important ones. You can find full CSS in both [starter files](https://github.com/jkkrow/custom-react-video-player-starter-files) and [finished code](https://github.com/jkkrow/custom-react-video-player).*
 
 ## <a href="#time" name="time">Time</a>
 
@@ -345,7 +345,7 @@ Related CSS:
 }
 ```
 
-With Button UI, we simply need to wrap each controls button with it. All you need to do is put svg icon inside `Btn` component. You can find it in icons folder in starter files I provided.
+With Button UI, we simply need to wrap each controls button with it. All you need to do is put svg icon inside `Btn` component. You can find it in icons folder of starter files I provided.
 
 To use svg in React,
 ```tsx
@@ -355,17 +355,11 @@ import { ReactComponent as Icon } from '<icon-path>/icon.svg';
 #### Playback.tsx
 
 ```tsx
-interface PlaybackProps {
-  onToggle: () => void
-}
-
-const Playback: React.FC<PlaybackProps> => ({ onToggle }) => {
+const Playback: React.FC => () => {
   return (
-    <div className="vp-controls__playback" onClick={onToggle}>
-      <Btn label="Play">
-        <PlayIcon />
-      </Btn>
-    </div>
+    <Btn label="Play" onClick={() => {}}>
+      <PlayIcon />
+    </Btn>
   )
 }
 ```
@@ -469,7 +463,163 @@ You can see that we not only can use `clamp()` function to size of property, but
 
 Next thing we're going to build is dropdown of video settings. There will be a list of settings that user can choose such as playback rate and resolution.
 
-We want to build it as multi-stage dropdown with animation like the one you can see in YouTube. to make it, we'll use 3rd party library called `react-transition-group`.
+We want to build it as a multi-stage dropdown with animation like the one you can see in YouTube. to make it, we'll use 3rd party library called `react-transition-group`. It is lightweight library and makes implementing transition much easier by exposing transition stages with className so that we can style it with CSS.
+
+The dropdown will be opened whenever the settings button is clicked so let's hook up with `useState`.
+
+#### VideoPlayer.tsx
+
+```tsx
+const [displayDropdown, setDisplayDropdown] = useState(false);
+
+// . . .
+
+<div className="vp-controls">
+  <Dropdown on={displayDropdown} />
+  
+  // . . .
+
+  <Settings onToggle={() => setDisplayDropdown((prev) => !prev)} />
+```
+
+#### Settings.tsx
+
+```tsx
+interface SettingsProps {
+  onToggle: () => void;
+}
+
+const Settings = React.Fc<SettingsProps> = ({ onToggle }) => {
+  return (
+    <Btn label="Settings" onClick={onToggle}>
+      <SettingIcon />
+    </Btn>
+  );
+}
+```
+
+#### Dropdown.tsx
+
+```tsx
+import { CSSTransition } from 'react-transition-group';
+
+interface DropdownProps {
+  on: boolean;
+}
+
+const Dropdown: React.FC<DropdownProps> = ({ on }) => {
+  return (
+    <CSSTransition
+      in={on}
+      classNames="vp-dropdown"
+      timeout={200}
+      mountOnEnter
+      unmountOnExit
+    >
+      <div className="vp-dropdown">
+       
+      </div>
+    </CSSTransition>
+  );
+};
+```
+
+First, create dropdown container with `CSSTransition` imported from `react-transition-group`. It will be mounted whenever `displayDropdown` state is `true`.
+
+```css
+.vp-dropdown {
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  width: clamp(25rem, 30vw, 40rem);
+  overflow: hidden;
+  transition: opacity 200ms ease-out;
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+/* CSS Transition */
+.vp-dropdown-enter {
+  opacity: 0;
+}
+.vp-dropdown-enter-active {
+  opacity: 1;
+}
+.vp-dropdown-exit-active {
+  opacity: 0;
+}
+```
+
+In dropdown, we'll also add `CSSTransition` components for 2 menus. Each menu stands for index and main. Index menu will show list of different kind of settings, and main menu is the list of options for that setting.
+
+For better explanation, I'll show you an example with dummy playback rate and resolutions. We'll implement actual settings in Part 2.
+
+```tsx
+const [isIndex, setIsIndex] = useState(true);
+
+// . . .
+
+<div className="vp-dropdown">
+  <CSSTransition
+    in={isIndex}
+    classNames="menu-index"
+    timeout={300}
+    mountOnEnter
+    unmountOnExit
+  >
+    {indexMenu}
+  </CSSTransition>
+
+  <CSSTransition
+    in={!isIndex}
+    classNames="menu-main"
+    timeout={300}
+    mountOnEnter
+    unmountOnExit
+  >
+    {menuList}
+  </CSSTransition>
+</div>
+```
+
+Show index menu if `isIndex` is `true`, and show main menu if `false`. Index menu:
+
+```tsx
+const [activeMenu, setActiveMenu] = useState<'resolution' | 'speed'>('speed');
+
+
+const selectMenuHandler = (activeMenu: 'resolution' | 'speed') => {
+  setIsIndex(false);
+  setActiveMenu(activeMenu);
+};
+
+const indexMenu = (
+  <div className="vp-dropdown__menu">
+    <ul className="vp-dropdown__list">
+      <li
+        className="vp-dropdown__item"
+        onClick={() => selectMenuHandler('speed')}
+      >
+        <span>Speed</span>
+        <span>x 1</span>
+      </li>
+    </ul>
+  </div>
+)
+```
+
+Main menu:
+
+```tsx
+const mainMenu = (
+  
+)
+```
+  
+
+### Calculate height
+
+### Ouside Click handler
+
 
 ## <a href="#loader" name="loader">Loader</a>
 
