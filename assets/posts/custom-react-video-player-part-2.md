@@ -7,7 +7,7 @@ date: "2022-03-12"
 isFeatured: true
 ---
 
-In [previous post](custom-react-video-player-part-1), we've built the layout of video player. Currently this does not doing anything so let's add a functionality to it. Here is the list of what we're going to implement.
+In [previous post](custom-react-video-player-part-1), we've built the layout of video player. Currently this does not doing anything so let's add a functionality to it. These are the features we're going to implement.
 
 * [Playback](#playback)
 * [Show & Hide Controls](#controls)
@@ -16,9 +16,12 @@ In [previous post](custom-react-video-player-part-1), we've built the layout of 
 * [Fullscreen](#fullscreen)
 * [Picture in Picture](#picture-in-picture)
 * [Settings (Playback Rate)](#settings)
+* [Loading](#loading)
 * [Keyboard Control](#keyboard-control)
+* [Error Handling](#error-handling)
+* [Optimization](#optimization)
 
-After implementing these functionality, our video player will work like this:
+After implementing these features, our video player will work like this:
 
 <figure>
   <iframe src="https://codesandbox.io/embed/github/jkkrow/custom-react-video-player-functionality/tree/main/?fontsize=14&hidenavigation=1&theme=dark&view=preview" style="width:100%; min-height:500px; aspect-ratio:16/9; border:0; border-radius: 4px; overflow:hidden;" title="jkkrow/custom-react-video-player-functionality" allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking" sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"></iframe>
@@ -61,7 +64,7 @@ Our `VideoPlayer` component get `src` and `autoPlay` as a props. However, unlike
 
 ## <a href="#playback" name="playback">Playback</a>
 
-Let's start with basic functionality. to control playback of video element, we need to listen to `play` and `pause` event. To indicate video state in UI, let's set playback state with `useState`.
+Let's start with basic functionality. To control playback of video element, we need to listen to `play` and `pause` event. To indicate video state in UI, let's set playback state with `useState`.
 
 ```tsx
 const [playbackState, setPlaybackState] = useState(false);
@@ -155,7 +158,7 @@ const togglePlayHandler = () => {
 And here's why we don't directly pass `autoPlay` into video element. Whenever handling video playback, we should store promise in `ref`. Therefore, do this instaed.
 
 ```tsx
-const videoLoadHandler = () => {
+const videoLoadedHandler = () => {
   const video = videoRef.current!;
 
   if (autoPlay) {
@@ -166,7 +169,7 @@ const videoLoadHandler = () => {
 ```tsx
 <video
   // ...
-  onLoadedMetadata={videoLoadHandler}
+  onLoadedMetadata={videoLoadedHandler}
 />
 ```
 
@@ -209,7 +212,7 @@ export const useTimeout = (): [
 };
 ```
 
-Use timeout hook in `VideoPlayer` component:
+With `useTimeout` hook, handle controls' visibility with `displayControls` state.
 
 ```tsx
 const [displayControls, setDisplayControls] = useState(true);
@@ -253,6 +256,13 @@ When video is paused, we want controls to be always shown. Otherwise, controls i
   <div className={`vp-controls${!displayControls ? ' hide' : ''}}>
 ```
 
+```css
+.vp-controls.hide {
+  opacity: 0;
+  pointer-events: none;
+}
+```
+
 Since `showControlsHandler` depends on playback state of video, also add it to `play` and `pause` handlers so that it is always triggered even when user don't move mouse when toggling playback.
 
 ```tsx
@@ -268,6 +278,158 @@ const videoPauseHandler = () => {
 ```
 
 ## <a href="#volume" name="volume">Volume</a>
+
+Similar to playback, `<video>` also have `volumechange` event.
+
+```tsx
+<video
+  // ...
+  onVolumeChange={volumeChangeHandler}
+/>
+```
+
+Video's volume value is between 0 and 1. whenever volume changes, store the value in state for UI component. We also need ref to store volume value in case of toggling mute. So that when unmuted, we can go back to last value.
+
+```tsx
+const [volumeState, setVolumeState] = useState(1);
+
+const volumeData = useRef(volumeState || 1)
+
+const volumeChangeHandler = () => {
+  const video = videoRef.current!;
+
+  setVolumeState(video.volume);
+
+  if (video.volume === 0) {
+    video.muted = true;
+  } else {
+    video.muted = false;
+    volumeData.current = video.volume;
+  }
+};
+
+const toggleMuteHandler = () => {
+  const video = videoRef.current!;
+
+  if (video.volume !== 0) {
+    volumeData.current = video.volume;
+    video.volume = 0;
+    setVolumeState(0);
+  } else {
+    video.volume = volumeData.current;
+    setVolumeState(volumeData.current);
+  }
+};
+
+const volumeInputHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const video = videoRef.current!;
+
+  video.volume = +event.target.value;
+};
+```
+```tsx
+<Volume
+  volume={volumeState}
+  onToggle={toggleMuteHandler}
+  onSeek={volumeInputHandler}
+/>
+```
+
+With volumeState, volume UI should be responsive depends on value. We can simply use different icons for each range. Then overwrite width of `<div>` element which indicates current value of volume with inline styles.
+
+For controlling, we've built `<input type="range">` to change volume by dragging it. Bind input handler and volumeState to `<input>`.
+
+#### Volume.tsx
+
+```tsx
+interface VolumeProps {
+  volume: number;
+  onToggle: () => void;
+  onSeek: (event: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
+const Volume: React.FC<VolumeProps> = ({ volume, onToggle, onSeek }) => {
+  return (
+    <div className="vp-volume">
+      <Btn onClick={onToggle}>
+        {volume > 0.7 && <VolumeHighIcon />}
+        {volume <= 0.7 && volume > 0.3 && <VolumeMiddleIcon />}
+        {volume <= 0.3 && volume > 0 && <VolumeLowIcon />}
+        {volume === 0 && <VolumeMuteIcon />}
+      </Btn>
+      <div className="vp-volume__range">
+        <div className="vp-volume__range--background" />
+        <div
+          className="vp-volume__range--current"
+          style={{ width: `${volume * 100}%` }}
+        >
+          <div className="vp-volume__range--current__thumb" />
+        </div>
+        <input
+          className="vp-volume__range--seek"
+          type="range"
+          value={volume}
+          max="1"
+          step="0.05"
+          onChange={onSeek}
+        />
+      </div>
+    </div>
+  );
+};
+```
+
+### LocalStorage
+
+Currently, our video player always starts with volume value of 1, which we defined it as initialState. However, for better user experience, we want video volume to be consistant. In other words, we don't want user to adjust volume every time they watch different videos.
+
+Therefore, we want to store volume date also in localStorage. For that, let's create another custom hook like we did with `setTimeout`.
+
+#### storage-hook.ts
+
+```tsx
+import { useCallback, useState } from 'react';
+
+export const useLocalStorage = <T = any>(
+  key: string,
+  initialValue?: T
+): [T, (value: any) => void] => {
+  const [storedItem, setStoredItem] = useState<T>(() => {
+    const item = localStorage.getItem(key);
+    return item ? JSON.parse(item) : initialValue || null;
+  });
+
+  const setLocalStorage = useCallback(
+    (value: any) => {
+      const newItem = value instanceof Function ? value(storedItem) : value;
+
+      setStoredItem(newItem);
+      localStorage.setItem(key, JSON.stringify(newItem));
+    },
+    [key, storedItem]
+  );
+
+  return [storedItem, setLocalStorage];
+};
+```
+
+#### VideoPlayer.tsx
+
+```tsx
+const [volumeState, setVolumeState] = useLocalStorage('video-volume', 1)
+```
+
+We also need to match actual video volume to stored value. Since we want to set volume before video starts, configure inside `onLoadedMetadata` handler that we've already created. 
+
+```tsx
+const videoLoadedHandler = () => {
+  const video = videoRef.current!;
+  
+  video.volume = volumeState;
+
+  // ...
+}
+```
 
 
 ## <a href="#progress" name="progress">Progress</a>
