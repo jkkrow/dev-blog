@@ -2,11 +2,11 @@
   position: fixed;
   display: flex;
   bottom: 1rem;
-  right: 3rem;
+  right: 1rem;
   padding: 1rem;
   gap: 2.5rem;
   border-radius: 100px;
-  background-color: var(--bg-900);
+  background-color: var(--bg-theme-primary);
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   pointer-events: none;
   opacity: 0;

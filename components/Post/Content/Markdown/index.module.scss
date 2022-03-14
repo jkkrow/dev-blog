@@ -17,14 +17,18 @@
   }
 
   a {
-    color: var(--text-theme);
     text-decoration: underline;
+  }
+
+  ul a {
+    text-decoration: none;
   }
 
   h1,
   h2,
   h3,
-  h4 {
+  h4,
+  ul {
     a {
       display: flex;
       align-items: center;
@@ -48,5 +52,28 @@
     &::-webkit-scrollbar {
       background-color: transparent;
     }
+  }
+
+  blockquote {
+    border-left: 1rem solid var(--bg-theme-tertiary);
+    padding: 1rem 2rem;
+    font-style: italic;
+    font-size: 1.5rem;
+
+    p {
+      margin: 0;
+    }
+  }
+
+  figure * {
+    margin: 0;
+  }
+
+  figcaption {
+    margin-top: 1rem;
+    font-style: italic;
+    font-size: small;
+    text-align: center;
+    opacity: 0.8;
   }
 }

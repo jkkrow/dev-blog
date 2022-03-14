@@ -1,7 +1,7 @@
-import Image from 'next/image';
 import { useContext, useEffect, useState } from 'react';
 
-import Theme from 'components/Theme';
+import Theme from 'components/Layout/Theme';
+import ArrowTop from 'components/Icons/ArrowTop';
 import { AppContext } from 'context/AppContext';
 import classes from './index.module.scss';
 
@@ -35,7 +35,7 @@ const Panel: React.FC = () => {
     >
       <Theme />
       <button onClick={scrollTopHandler}>
-        <Image src="/icons/arrow-top.svg" alt="Arrow Icon" layout="fill" />
+        <ArrowTop />
       </button>
     </aside>
   );

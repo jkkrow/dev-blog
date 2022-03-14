@@ -1,6 +1,7 @@
-import Image from 'next/image';
 import { useContext } from 'react';
 
+import ThemeLight from 'components/Icons/ThemeLight';
+import ThemeDark from 'components/Icons/ThemeDark';
 import { AppContext } from 'context/AppContext';
 import classes from './index.module.scss';
 
@@ -9,11 +10,7 @@ const Theme: React.FC = () => {
 
   return (
     <button className={classes.theme} onClick={setTheme}>
-      {theme === 'light' ? (
-        <Image src="/icons/theme-light.svg" alt="theme-light" layout="fill" />
-      ) : (
-        <Image src="/icons/theme-dark.svg" alt="theme-dark" layout="fill" />
-      )}
+      {theme === 'light' ? <ThemeLight /> : <ThemeDark />}
     </button>
   );
 };

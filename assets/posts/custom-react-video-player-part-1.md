@@ -1,8 +1,8 @@
 ---
-title: "Building Custom React Video Player - Part 1"
+title: "Create Custom React Video Player - Part 1"
 tags: ["React", "Typescript", "CSS"]
 image: "custom-react-video-player-thumb.png"
-excerpt: "Build a custom video player in React - In Part 1, you will build a layout of video player with CSS in a responsive way."
+excerpt: "Create a custom video player in React - In Part 1, you will build a layout of video player with CSS in a responsive way."
 date: "2022-03-05"
 isFeatured: true
 ---
@@ -233,7 +233,7 @@ We'll also show thumb like default range input for current progress when hovered
 
 ```css
 .vp-progress__range--current {
-  . . .
+  /* ... */
   position: relative;
   display: flex;
   align-items: center;
@@ -437,7 +437,7 @@ What we're going to do is hide the volume bar initially, and scale it when hover
 
 ```css
 .vp-volume__range {
-  . . .
+  /* ... */
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 200ms ease-out;
@@ -480,7 +480,7 @@ const [displayDropdown, setDisplayDropdown] = useState(false);
 ```tsx
 <div className="vp-controls">
   <Dropdown on={displayDropdown} />
-  . . .
+  // ...
   <Settings onToggle={() => setDisplayDropdown((prev) => !prev)} />
 ```
 
@@ -696,14 +696,14 @@ We can change this by setting the dropdown height automatically changed whenever
 
 ```tsx
 <CSSTransition
-  . . .
+  // ...
   onEnter={calcHeight}
 >
   {indexMenu}
 </CSSTransition>
 
 <CSSTransition
-  . . .
+  // ...
   onEnter={calcHeight}
 >
   {mainMenu}
@@ -728,7 +728,7 @@ Transition height in CSS:
 
 ```css
 .vp-dropdown {
-  . . .
+  /* ... */
   transition: opacity 200ms ease-out, height 300ms ease-out;
 }
 ```

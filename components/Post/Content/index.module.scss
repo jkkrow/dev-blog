@@ -1,12 +1,17 @@
 .content {
   width: 95%;
-  max-width: 120rem;
+  max-width: 90rem;
   margin: 4rem auto;
   overflow: hidden;
   font-size: 1.8rem;
-  color: var(--text-theme);
-  background-color: var(--bg-theme);
+  color: var(--text-theme-primary);
+  background-color: var(--bg-theme-secondary);
   box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+
+  @media (max-width: 700px) {
+    width: 100%;
+    margin: 0;
+  }
 }
 
 .image {

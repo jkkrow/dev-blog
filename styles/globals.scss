@@ -5,8 +5,11 @@
 }
 
 .theme-dark {
-  --bg-theme: hsl(0, 0%, 20%);
-  --text-theme: hsl(0, 0%, 80%);
+  --bg-theme-primary: hsl(0, 0%, 10%);
+  --bg-theme-secondary: hsl(0, 0%, 20%);
+  --bg-theme-tertiary: hsl(0, 0%, 30%);
+  --text-theme-primary: hsl(0, 0%, 80%);
+  --text-theme-secondary: hsl(0, 0%, 70%);
 }
 
 html {
@@ -30,8 +33,11 @@ html {
   --text-800: hsl(0, 0%, 80%);
   --text-900: hsl(0, 0%, 90%);
 
-  --bg-theme: hsl(0, 0%, 85%);
-  --text-theme: hsl(0, 0%, 0%);
+  --bg-theme-primary: hsl(0, 0%, 85%);
+  --bg-theme-secondary: hsl(0, 0%, 85%);
+  --bg-theme-tertiary: hsl(0, 0%, 60%);
+  --text-theme-primary: hsl(0, 0%, 0%);
+  --text-theme-secondary: hsl(0, 0%, 70%);
 
   font-size: 62.5%;
 
@@ -42,9 +48,9 @@ html {
 
 body {
   font-size: 1.6rem;
-  font-family: 'Open Sans', sans-serif;
-  color: var(--text-100);
-  background-color: var(--bg-700);
+  font-family: 'Roboto Slab', sans-serif;
+  color: var(--text-theme-primary);
+  background-color: var(--bg-theme-tertiary);
 }
 
 h1,
@@ -54,7 +60,7 @@ h3 {
 }
 
 a {
-  color: inherit;
+  color: var(--text-theme-primary);
   text-decoration: none;
 }
 
@@ -70,6 +76,7 @@ button {
 }
 
 svg {
+  color: var(--text-theme-primary);
   fill: currentColor;
 }
 
@@ -103,7 +110,7 @@ img {
 
 ::-webkit-scrollbar {
   width: 20px;
-  background-color: var(--bg-900);
+  background-color: var(--bg-theme-primary);
 
   &-thumb {
     background-clip: padding-box;

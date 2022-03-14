@@ -19,11 +19,20 @@
   },
   {
     "slug": "custom-react-video-player-part-1",
-    "title": "Building Custom React Video Player - Part 1",
+    "title": "Create Custom React Video Player - Part 1",
     "tags": ["React", "Typescript", "CSS"],
     "image": "custom-react-video-player-thumb.png",
-    "excerpt": "Build a custom video player in React - In Part 1, you will build a layout of video player with CSS in a responsive way.",
+    "excerpt": "Create a custom video player in React - In Part 1, you will build a layout of video player with CSS in a responsive way.",
     "date": "2022-03-05",
+    "isFeatured": true
+  },
+  {
+    "slug": "custom-react-video-player-part-2",
+    "title": "Create Custom React Video Player - Part 2",
+    "tags": ["React", "Typescript"],
+    "image": "custom-react-video-player-thumb.png",
+    "excerpt": "Create a custom video player in React - In Part 2, you will add a video functionality to built UI such as playback, volume, progress, fullscreen and etc.",
+    "date": "2022-03-12",
     "isFeatured": true
   }
 ]
