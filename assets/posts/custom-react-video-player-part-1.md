@@ -1,7 +1,7 @@
 ---
 title: "Create Custom React Video Player - Part 1"
 tags: ["React", "Typescript", "CSS"]
-image: "custom-react-video-player-thumb.png"
+image: "custom-react-video-player-part-1-thumb.png"
 excerpt: "Create a custom video player in React - In Part 1, you will build a layout of video player with CSS in a responsive way."
 date: "2022-03-05"
 isFeatured: true

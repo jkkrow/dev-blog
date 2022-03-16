@@ -1,7 +1,7 @@
 ---
 title: "Create Custom React Video Player - Part 2"
 tags: ["React", "Typescript"]
-image: "custom-react-video-player-thumb.png"
+image: "custom-react-video-player-part-2-thumb.png"
 excerpt: "Create a custom video player in React - In Part 2, you will add a video functionality to built UI such as playback, volume, progress, fullscreen and etc."
 date: "2022-03-12"
 isFeatured: true
