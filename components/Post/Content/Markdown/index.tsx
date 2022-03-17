@@ -63,6 +63,18 @@ const Markdown: React.FC<MarkdownProps> = ({ slug, content }) => {
             return <p>{children}</p>;
           },
 
+          img: ({ src, alt }) => {
+            return (
+              <div className={classes.image}>
+                <Image
+                  src={`/images/posts/${slug}/${src}`}
+                  alt={alt}
+                  layout="fill"
+                />
+              </div>
+            );
+          },
+
           code: ({ className, inline, children }) => {
             const language = (className || '').split('-')[1];
 

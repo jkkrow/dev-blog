@@ -1012,7 +1012,11 @@ const hideLoaderHandler = () => {
 
 However, this isn't enough for realistic user experience. If you playing around with progress bar, jumping to position where the buffer is downloaded, you can see `waiting` event fired instantly even though it is playable without further buffering.
 
-![Loading shows unnecessarily](instant-loading.gif)
+<figure>
+  <img src="instant-loading.jpg" alt="Loading shows unnecessarily">
+  <img src="instant-loading.gif" alt="Loading shows unnecessarily">
+  <figcaption>Loading shows unnecessarily</figcaption>
+</figure>
 
 So we need to wait some amount of moment before showing loader, to check if it is actually needed to be shown. We can achieve this with `setTimeout` function. Therefore, let's use our `useTimeout` hook again!
 
@@ -1116,7 +1120,10 @@ We want to show some UI effect when pressing keyboard for nice user experience.
 
 Like below:
 
-![Control rewind & skip with key](key-rewind-skip.gif)
+<figure>
+  <img src="key-rewind-skip.jpg" alt="Control rewind & skip with key">
+  <img src="key-rewind-skip.gif" alt="Control rewind & skip with key">
+</figure>
 
 For that, I've prepared another component called `KeyAction`, which you can find in [here](https://github.com/jkkrow/custom-react-video-player-functionality/tree/main/src/components/Player/UI/KeyAction).
 
@@ -1212,7 +1219,10 @@ const skipHandler = () => {
 
 Next, let's also add effect on volume change. This time, we want to show volume UI for few seconds when volume is changed, and then hide it after seconds.
 
-![Control volume with key](key-volume.gif)
+<figure>
+  <img src="key-volume.jpg" alt="Control volume with key">
+  <img src="key-volume.gif" alt="Control volume with key">
+</figure>
 
 In `KeyAction`, volume UI is using `CSSTransition` so we don't have to directly animate element like above. Instead, set the state of displaying volume UI with `setTimeout`.
 
