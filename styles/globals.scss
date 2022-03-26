@@ -2,6 +2,7 @@
   padding: 0;
   margin: 0;
   box-sizing: border-box;
+  transition: background-color 300ms ease-out;
 }
 
 .theme-dark {
@@ -9,7 +10,7 @@
   --bg-theme-secondary: hsl(0, 0%, 20%);
   --bg-theme-tertiary: hsl(0, 0%, 30%);
   --text-theme-primary: hsl(0, 0%, 80%);
-  --text-theme-secondary: hsl(0, 0%, 70%);
+  --text-theme-secondary: hsl(0, 0%, 35%);
 }
 
 html {
@@ -37,9 +38,10 @@ html {
   --bg-theme-secondary: hsl(0, 0%, 85%);
   --bg-theme-tertiary: hsl(0, 0%, 60%);
   --text-theme-primary: hsl(0, 0%, 0%);
-  --text-theme-secondary: hsl(0, 0%, 70%);
+  --text-theme-secondary: hsl(0, 0%, 75%);
 
   font-size: 62.5%;
+  overflow-y: scroll;
 
   @media (max-width: 700px) {
     font-size: 50%;
@@ -73,11 +75,13 @@ button {
   cursor: pointer;
   border: none;
   outline: none;
+  transition: none;
 }
 
 svg {
   color: var(--text-theme-primary);
   fill: currentColor;
+  stroke: currentColor;
 }
 
 img {

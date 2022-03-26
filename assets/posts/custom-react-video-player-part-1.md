@@ -21,13 +21,13 @@ In the series of tutorial, we're gonna create custom video player in react step 
 
 We'll start from building a resposive UI in Part 1. You can find finished code of Part 1 in [here](https://github.com/jkkrow/custom-react-video-player-layout).
 
-## <a href="#get-started" name="get-started">Get Started</a>
+## Get Started
 
 We will use React library to implement video player since it allows you to create elements in declarative way and makes things much easier. I've preprared [starter files](https://github.com/jkkrow/custom-react-video-player-starter-files) to start on, which include stylesheets and icons you need. To start, download or clone repository, and open the project directory in your text editor.
 
 Then run `npm install` to install all dependencies and `npm start` to start project. In project folder, you'll find a `App` component with `VideoPlayer` component. `VideoPlayer` component is placed in `components/Player` folder and is currently returning empty div. Let's start from there!
 
-## <a href="#layout" name="layout">Layout</a>
+## Layout
 
 Our final controls UI looks like below.
 
@@ -113,7 +113,7 @@ The container should have `relative` position so that controls can be placed bas
 
 *** *Also, since I don't want to bore you by explaining every CSS, which would also make the post really long, I will only explain important ones. You can find full CSS in both [starter files](https://github.com/jkkrow/custom-react-video-player-starter-files) and [finished code](https://github.com/jkkrow/custom-react-video-player-layout).*
 
-## <a href="#time" name="time">Time</a>
+## Time
 
 With styling layout finished, now let's start from header part of controls. Time UI will show current time and remained time of video. We will implement actual time in Part 2, so for now, let's just use dummy string.
 
@@ -140,7 +140,7 @@ Since we already have responsive font size inside video container, we only need 
 }
 ```
 
-## <a href="#progress" name="progress">Progress</a>
+## Progress
 
 Let's create progress bar. First, create a container for ranges.
 
@@ -284,7 +284,7 @@ The last thing we'll do in progress component is adding a tooltip which shows ti
 }
 ```
 
-## <a href="#button-ui" name="button-ui">Button UI</a>
+## Button UI
 
 Now we've finished the header section of controls. Next thing we need to do is styling buttons inside of the body part of controls. For consistant style and reducing code duplication, we'll create `Btn` component to wrap every button UI in controls.
 
@@ -390,7 +390,7 @@ Do the same thing with `Skip`, `Rewind`, `Settings`, `Pip`, `Fullscreen` buttons
 </div>
 ```
 
-## <a href="#volume" name="volume">Volume</a>
+## Volume
 
 In `Volume` component, we'll also use `Btn` component to toggling the video mute. But unlike other buttons, we also need a bar element to control video volume. Making bar is the same process you saw in [progress](#progress) section. Only difference is that you don't need an extra bar for buffer.
 
@@ -463,7 +463,7 @@ Then, add hover effect to both button and range.
 
 You can see that we not only can use `clamp()` function to size of property, but also transition value. Also, we used negative value to move to opposite direction. In above code, our button will move left by 2.5rem to 5rem depends on viewport width size.
 
-## <a href="#dropdown" name="dropdown">Dropdown</a>
+## Dropdown
 
 Next thing we're going to build is dropdown of video settings. There will be a list of settings that user can choose such as playback rate and resolution.
 
@@ -872,7 +872,7 @@ const Dropdown: React.FC<DropdownProps> = ({ on, onClose }) => {
 }
 ```
 
-## <a href="#conclusion" name="conclusion">Conclusion</a>
+## Conclusion
 
 Alright! That's all for now. We've just built quite fancy looking custom UI of video player which is also responsive.
 

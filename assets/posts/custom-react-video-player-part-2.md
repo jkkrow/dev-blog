@@ -17,7 +17,7 @@ In [previous post](custom-react-video-player-part-1), we've built the layout of 
 * [Skip & Rewind](#rewind-and-skip)
 * [Fullscreen](#fullscreen)
 * [Picture in Picture](#picture-in-picture)
-* [Settings (Playback Rate)](#settings)
+* [Settings](#settings)
 * [Loader](#loader)
 * [Keyboard Control](#keyboard-control)
 * [Error Handling](#error-handler)
@@ -31,7 +31,7 @@ After implementing these features, our video player will work like this:
 </figure>
 
 
-## <a href="#get-started" name="get-started">Get Started</a>
+## Get Started
 
 We'll continue from where we've done in Part 1, so if you skip the previous section, you can find a finished code of Part 1 in [here](https://github.com/jkkrow/custom-react-video-player-layout). Clone the repository and run `npm install` to install dependencies, then run `npm start` to start the project.
 
@@ -64,7 +64,7 @@ In React, to handle media element such as `<audio>` or `<video>`, you need to us
 
 Our `VideoPlayer` component gets **src** and **autoPlay** as a props. In the `App` component, you can find sample video url for testing. Pass it to as a props and set it to `<video>`. However, unlike src, we'll not directly pass autoPlay property into video element. I'll explain why in a minute.
 
-## <a href="#playback" name="playback">Playback</a>
+## Playback
 
 Let's start with basic functionality. To control playback of video element, we need to listen to `play` and `pause` event. To indicate video state in UI, let's set playback state with `useState`.
 
@@ -177,7 +177,7 @@ const videoLoadedHandler = () => {
 
 `loadedMetadata` event is fired when the video element loaded data such as duration and is ready to play. Therefore, this is great place to prepare settings and start `autoPlay`.
 
-## <a href="#show-and-hide-controls" name="show-and-hide-controls">Show & Hide Controls</a>
+## Show & Hide Controls
 
 While video is playing, hide video controls if user is not interacting with it. To implement it, we need `setTimeout` function to hide controls after few seconds of last interaction.
 
@@ -279,7 +279,7 @@ const videoPauseHandler = () => {
 };
 ```
 
-## <a href="#rewind-and-skip" name="rewind-and-skip">Rewind & Skip</a>
+## Rewind & Skip
 
  We'll jump by 10 seconds whenever rewind or skip button is clicked.
 
@@ -306,7 +306,7 @@ const SkipHandler = () => {
 
 It's too simple right? This is enough for now since we'll implement time change handler later in progress section. We'll also add some UI effect of rewind & skip later when we implementing keyboard controls.
 
-## <a href="#volume" name="volume">Volume</a>
+## Volume
 
 Similar to playback, `<video>` also have `volumechange` event.
 
@@ -460,7 +460,7 @@ const videoLoadedHandler = () => {
 }
 ```
 
-## <a href="#time" name="time">Time</a>
+## Time
 
 To indicate time, we can use `timeupdate` event of video element which fired as video progress. What in there, we can grab videoRef object as always, and get  **duration** and **currentTime**.
 
@@ -527,7 +527,7 @@ const Time: React.FC<TimeProps> = ({ time }) => (
 );
 ```
 
-## <a href="#progress" name="progress">Progress</a>
+## Progress
 
 Just like time, updating progress happens in `timeupdate` event handler. But this time, we will also handle buffer.
 
@@ -753,7 +753,7 @@ const Progress: React.FC<ProgressProps> = ({
 };
 ```
 
-## <a href="#fullscreen" name="fullscreen">Fullscreen</a>
+## Fullscreen
 
 Implementing fullscreen is quite straightforward. We need state for fullscreen status, event handler on fullscreen change, function for toggling fullscreen.
 
@@ -838,7 +838,7 @@ useEffect(() => {
 }, [])
 ```
 
-## <a href="#picture-in-picture" name="picture-in-picture">Picture in Picture</a>
+## Picture in Picture
 
 Implementing pip is almost identical to fullscreen. Create state for pip status, pip change listeners, toggle function.
 
@@ -887,7 +887,7 @@ const Pip: React.FC<PipProps> = ({ isPipMode, onToggle }) => {
 };
 ```
 
-## <a href="#settings" name="settings">Settings (Playback Rate)</a>
+## Settings
 
 Currently, in `Dropdown.tsx`, we're using dummy values for menu list. Let's change them to real settings of video. We'll only implement playback rate for now, then we'll add resolution settings later after we implemented ABR.
 
@@ -982,7 +982,7 @@ const videoLoadedHandler = () => {
 };
 ```
 
-## <a href="#loader" name="loader">Loader</a>
+## Loader
 
 We've finished implementing functionality inside our controls UI. But other than controls, there are more UI components we need to add. Currently, there is no loader inside our video player. Usually video player shows loader whenever it's not ready to play. Therefore, let's add it!
 
@@ -1049,7 +1049,7 @@ Besides `waiting` event, you can also show loader in `seeking` event. Then hide 
 
 The difference is now you will also see loader when seeking with video paused.
 
-## <a href="#keyboard-control" name="keyboard-control">Keyboard Control</a>
+## Keyboard Control
 
 Let's implement keyboard control. What we want to control with keyboard is *rewind & skip, and volume up & down* with arrow keys. We also want to toggle playback when pressing space bar.
 
@@ -1292,7 +1292,7 @@ const keyEventHandler = (event: KeyboardEvent) => {
 }
 ```
 
-## <a href="#error-handler" name="error-handler">Error Handler</a>
+## Error Handler
 
 We'll display `Error` component when some error happens on `<video>`. You can also find this in [Github](https://github.com/jkkrow/custom-react-video-player-functionality/tree/main/src/components/Player/UI/Error). 
 
@@ -1321,7 +1321,7 @@ const errorHandler = () => {
 <Error error={videoError} />
 ```
 
-## <a href="#optimization" name="optimization">Optimization</a>
+## Optimization
 
 In React, components are re-rendered whenever states and props are changed. We've been used  `useState` pretty a lot in the `VideoPlayer` component, and updating of some of these states are happening in event handler such as `timechange` or `change` events, which is fired quite often. This means our component will be re-rendered frequently as well. Therefore, there are some optimizations we can implement to prevent unnecessary re-renders.
 
@@ -1373,7 +1373,7 @@ export default memo(Playback);
 
 Now `Playback` component will be re-rendered only when related state is changed. You can do this to all subcomponents of `VideoPlayer`! One thing you need to note is that you should wrap handler first if you are using `React.memo`. Because it is no use if the function you passed as a props is re-defined every time.
 
-## <a href="#conclusion" name="conclusion">Conclusion</a>
+## Conclusion
 
 Great! That's all for implementing video functionalities. Now we have fully functioning video player! With the workflow of implementation, you can even add extra features on your need - such as navigating to next video in a playlist, or adding captions or subtitles. I'm pretty sure you can do these extra jobs on your own.
 

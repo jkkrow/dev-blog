@@ -18,7 +18,7 @@ const AppContextProvider: React.FC = ({ children }) => {
   const contextRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    const storedTheme = localStorage.getItem('theme') as Theme | null;
+    const storedTheme = localStorage.getItem('blog-theme') as Theme | null;
     setTheme(storedTheme || 'light');
   }, []);
 
@@ -29,7 +29,7 @@ const AppContextProvider: React.FC = ({ children }) => {
   const toggleThemeHandler = useCallback(() => {
     const changedTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(changedTheme);
-    localStorage.setItem('theme', changedTheme);
+    localStorage.setItem('blog-theme', changedTheme);
   }, [theme]);
 
   return (

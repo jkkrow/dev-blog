@@ -42,8 +42,16 @@
         transition: opacity 200ms ease-out;
       }
 
-      &:hover::after {
-        opacity: 1;
+      @media (hover: hover) {
+        &:hover::after {
+          opacity: 1;
+        }
+      }
+
+      @media (hover: none) {
+        &:active::after {
+          opacity: 1;
+        }
       }
     }
   }
@@ -116,4 +124,13 @@
     text-align: center;
     opacity: 0.8;
   }
+}
+
+.inline {
+  padding: 0.25rem 0.5rem;
+  border-radius: 3px;
+  font-family: Inconsolata, Monaco, Consolas, 'Courier New', Courier, monospace;
+  font-size: 1.5rem;
+  color: var(--text-theme-primary);
+  background-color: var(--text-theme-secondary);
 }

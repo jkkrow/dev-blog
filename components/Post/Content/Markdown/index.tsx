@@ -1,7 +1,9 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
+import { HeadingProps } from 'react-markdown/lib/ast-to-react';
 import rehypeRaw from 'rehype-raw';
-import { useContext } from 'react';
+import { PropsWithChildren, useContext } from 'react';
 import { PrismLight as SyntaxHighlighter } from 'react-syntax-highlighter';
 
 import darkTheme from 'react-syntax-highlighter/dist/cjs/styles/prism/vs-dark';
@@ -40,27 +42,65 @@ const Markdown: React.FC<MarkdownProps> = ({ slug, content }) => {
 
   const colorTheme = theme === 'light' ? lightTheme : darkTheme;
 
+  const generateLinkedHeading = (level: 1 | 2 | 3) => {
+    const heading = ({ children }: PropsWithChildren<HeadingProps>) => {
+      const CustomTag = `h${level}` as keyof JSX.IntrinsicElements;
+      const text = children[0] as string;
+      const convertedText = text
+        .toLowerCase()
+        .replace(/&/g, 'and')
+        .replace(/[^\w\s]/gi, '')
+        .replace(/\s+/g, '-');
+
+      return (
+        <CustomTag id={convertedText}>
+          <a href={`#${convertedText}`}>{children}</a>
+        </CustomTag>
+      );
+    };
+
+    return heading;
+  };
+
   return (
     <section className={classes.markdown}>
       <ReactMarkdown
         rehypePlugins={[rehypeRaw]}
         components={{
-          p: ({ node, children }: any) => {
-            if (node.children[0].tagName === 'img') {
-              const image = node.children[0];
+          h1: generateLinkedHeading(1),
+          h2: generateLinkedHeading(2),
+          h3: generateLinkedHeading(3),
 
-              return (
-                <div className={classes.image}>
-                  <Image
-                    src={`/images/posts/${slug}/${image.properties.src}`}
-                    alt={image.alt}
-                    layout="fill"
-                  />
-                </div>
-              );
+          a: ({ children, href }) => {
+            const isHashLink = href![0] === '#';
+
+            if (isHashLink) {
+              return <a href={href}>{children}</a>;
             }
 
-            return <p>{children}</p>;
+            return (
+              <Link href={href!}>
+                <a>{children}</a>
+              </Link>
+            );
+          },
+
+          p: ({ node, children }: any) => {
+            if (node.children[0].tagName !== 'img') {
+              return <p>{children}</p>;
+            }
+
+            const image = node.children[0];
+
+            return (
+              <div className={classes.image}>
+                <Image
+                  src={`/images/posts/${slug}/${image.properties.src}`}
+                  alt={image.alt}
+                  layout="fill"
+                />
+              </div>
+            );
           },
 
           img: ({ src, alt }) => {
@@ -76,9 +116,13 @@ const Markdown: React.FC<MarkdownProps> = ({ slug, content }) => {
           },
 
           code: ({ className, inline, children }) => {
+            if (inline) {
+              return <code className={classes.inline}>{children}</code>;
+            }
+
             const language = (className || '').split('-')[1];
 
-            return !inline ? (
+            return (
               <SyntaxHighlighter
                 style={colorTheme}
                 language={language}
@@ -90,17 +134,6 @@ const Markdown: React.FC<MarkdownProps> = ({ slug, content }) => {
               >
                 {children}
               </SyntaxHighlighter>
-            ) : (
-              <code
-                style={{
-                  ...colorTheme['pre[class*="language-"]'],
-                  padding: '0.25rem 0.5rem',
-                  fontSize: '1.5rem',
-                  borderRadius: '5px',
-                }}
-              >
-                {children}
-              </code>
             );
           },
         }}

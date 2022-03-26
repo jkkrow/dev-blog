@@ -1,3 +1,5 @@
+import { motion, AnimatePresence } from 'framer-motion';
+
 import PostItem from '../Item';
 import { Post } from 'types/post';
 import classes from './index.module.scss';
@@ -11,11 +13,13 @@ const PostGrid: React.FC<PostGridProps> = ({ posts, label }) => {
   return (
     <section className={classes.section}>
       {label && <h2 className={classes.label}>{label}</h2>}
-      <ul className={classes.grid}>
-        {posts.map((post) => (
-          <PostItem key={post.slug} post={post} />
-        ))}
-      </ul>
+      <motion.ul layout className={classes.grid}>
+        <AnimatePresence>
+          {posts.map((post) => (
+            <PostItem key={post.slug} post={post} />
+          ))}
+        </AnimatePresence>
+      </motion.ul>
     </section>
   );
 };

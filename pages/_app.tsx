@@ -8,9 +8,28 @@ import AppContextProvider from 'context/AppContext';
 import 'styles/globals.scss';
 import 'styles/nprogress.scss';
 
-Router.events.on('routeChangeStart', nProgress.start);
-Router.events.on('routeChangeComplete', nProgress.done);
-Router.events.on('routeChangeError', nProgress.done);
+let timer: any;
+let state: 'loading' | 'stop';
+const delay = 250;
+
+const load = () => {
+  if (state === 'loading') return;
+
+  state = 'loading';
+  timer = setTimeout(() => {
+    nProgress.start();
+  }, delay);
+};
+
+const stop = () => {
+  state = 'stop';
+  clearTimeout(timer);
+  nProgress.done();
+};
+
+Router.events.on('routeChangeStart', load);
+Router.events.on('routeChangeComplete', stop);
+Router.events.on('routeChangeError', stop);
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
   return (

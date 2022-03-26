@@ -9,7 +9,7 @@ isFeatured: true
 
 This is the last section of creating custom react video player. By far, we've built layout of video player in [Part 1](custom-react-video-player-part-1), and implemented functionality to it in [Part 2](custom-react-video-player-part-2). As a final step, we're going to add a **Adaptive Bitrate Streaming** feature.
 
-## <a href="#what-is-adaptive-bitrate-streaming" name="what-is-adaptive-bitrate-streaming">What is Adaptive Bitrate Streaming?</a>
+## What is Adaptive Bitrate Streaming
 
 Adaptive bitrate streaming (ABR) is a method that delivers video in most efficient way. It allows to provide video with optimal quality based on client's network conditions and device capabilities. It works by detecting a user's bandwidth and CPU capacity in real time and adjusting the quality of the media stream accordingly. This technology is used by most of video streaming services nowadays - such as YouTube and Netflix.
 
@@ -27,7 +27,7 @@ Here is how it works. First, the client downloads a manifest file that describes
 
 That is an abstraction of how ABR works. You can find more detailed explanation in [here](https://en.wikipedia.org/wiki/Adaptive_bitrate_streaming#Benefits_of_adaptive_bitrate_streaming). However, since this post is all about just consuming pre-populated videos, let's enough talking and implement this feature in our video player.
 
-## <a href="#overview" name="overview">Overview</a>
+## Overview
 
 We will build a player with adaptive bitrate streaming available. And we'll also allow users to manually change the resolution of it.
 
@@ -36,7 +36,7 @@ The finishded player would work like this:
 <iframe src="https://codesandbox.io/embed/github/jkkrow/custom-react-video-player-abr/tree/main/?fontsize=14&hidenavigation=1&theme=dark&view=preview" style="width:100%; min-height:500px; aspect-ratio:16/9; border:0; border-radius: 4px; overflow:hidden;" title="jkkrow/custom-react-video-player-abr" allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking" sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"></iframe>
 
 
-## <a href="#get-started" name="get-started">Get started</a>
+## Get started
 
 We'll continue from where we've done so far. For those who skipped previous sections, grab a starting files from [here](https://github.com/jkkrow/custom-react-video-player-functionality). You can find a fully functioning video player with only lack of ABR feature. Clone the repository and run `npm install` to install dependencies, then run `npm start` to start the project.
 
@@ -52,7 +52,7 @@ We also need [Mux.js](https://github.com/videojs/mux.js/) for Shaka Player to su
 npm install shaka-player mux.js
 ```
 
-## <a href="#implementation" name="implementation">Implementation</a>
+## Implementation
 
 Before implementing shaka player, let's test our video player with sample url which is in HLS format.
 
@@ -137,7 +137,7 @@ useEffect(() => {
 That's all. How simple it is! We've just turned our video player into adaptive media player which can play HLS and DASH formats. You'll see the player is working now with given sample url.
 
 
-## <a href="#changing-resolution" name="changing-resolution">Changing Resolution</a>
+## Changing Resolution
 
 Although it works great, we aren't done yet. We also want user to manually change the resolution to what they want. Just as YouTube player does.
 
@@ -489,7 +489,7 @@ useEffect(() => {
 }, [activeResolutionHeight, setResolutionInterval, clearResolutionInterval]);
 ```
 
-## <a href="#conclusion" name="conclusion">Conclusion</a>
+## Conclusion
 
 That's all for implementing ABR into video player and finalizing our long series of creating custom video player!
 
