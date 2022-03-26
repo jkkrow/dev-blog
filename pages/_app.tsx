@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import Router from 'next/router';
 import type { AppProps } from 'next/app';
+import { AnimatePresence } from 'framer-motion';
 import nProgress from 'nprogress';
 
 import Layout from 'components/Layout';
@@ -31,14 +32,16 @@ Router.events.on('routeChangeStart', load);
 Router.events.on('routeChangeComplete', stop);
 Router.events.on('routeChangeError', stop);
 
-const MyApp = ({ Component, pageProps }: AppProps) => {
+const MyApp = ({ Component, pageProps, router }: AppProps) => {
   return (
     <AppContextProvider>
+      <Head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </Head>
       <Layout>
-        <Head>
-          <meta name="viewport" content="width=device-width, initial-scale=1" />
-        </Head>
-        <Component {...pageProps} />
+        <AnimatePresence initial={false} exitBeforeEnter>
+          <Component {...pageProps} key={router.route} />
+        </AnimatePresence>
       </Layout>
     </AppContextProvider>
   );

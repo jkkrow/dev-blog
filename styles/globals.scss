@@ -41,6 +41,7 @@ html {
   --text-theme-secondary: hsl(0, 0%, 75%);
 
   font-size: 62.5%;
+  overflow-x: hidden;
   overflow-y: scroll;
 
   @media (max-width: 700px) {

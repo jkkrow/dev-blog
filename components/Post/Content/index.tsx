@@ -1,3 +1,5 @@
+import { motion } from 'framer-motion';
+
 import Header from './Header';
 import Markdown from './Markdown';
 import { PostDetail } from 'types/post';
@@ -7,11 +9,24 @@ interface PostContentProps {
   post: PostDetail;
 }
 
+const variants = {
+  hidden: { opacity: 0, y: 100 },
+  enter: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: 100 },
+};
+
 const PostContent: React.FC<PostContentProps> = ({ post }) => {
   const imagePath = `/images/posts/${post.slug}/${post.image}`;
 
   return (
-    <article className={classes.content}>
+    <motion.article
+      className={classes.content}
+      initial="hidden"
+      animate="enter"
+      exit="exit"
+      variants={variants}
+      transition={{ ease: 'easeOut' }}
+    >
       <Header
         title={post.title}
         tags={post.tags}
@@ -19,7 +34,7 @@ const PostContent: React.FC<PostContentProps> = ({ post }) => {
         date={post.date}
       />
       <Markdown slug={post.slug} content={post.content} />
-    </article>
+    </motion.article>
   );
 };
 

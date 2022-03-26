@@ -9,18 +9,31 @@ interface PostGridProps {
   label?: string;
 }
 
+const variants = {
+  hidden: { x: '100%' },
+  enter: { x: 0 },
+  exit: { x: '-100%' },
+};
+
 const PostGrid: React.FC<PostGridProps> = ({ posts, label }) => {
   return (
-    <section className={classes.section}>
+    <motion.section
+      className={classes.section}
+      initial="hidden"
+      animate="enter"
+      exit="exit"
+      variants={variants}
+      transition={{ ease: 'easeOut' }}
+    >
       {label && <h2 className={classes.label}>{label}</h2>}
       <motion.ul layout className={classes.grid}>
-        <AnimatePresence>
+        <AnimatePresence initial={false}>
           {posts.map((post) => (
             <PostItem key={post.slug} post={post} />
           ))}
         </AnimatePresence>
       </motion.ul>
-    </section>
+    </motion.section>
   );
 };
 

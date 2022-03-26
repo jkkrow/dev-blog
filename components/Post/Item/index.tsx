@@ -11,17 +11,25 @@ interface PostItemProps {
   post: Post;
 }
 
+const variants = {
+  hidden: { opacity: 0, y: -50 },
+  enter: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -50 },
+};
+
 const PostItem: React.FC<PostItemProps> = ({ post }) => {
   const imagePath = `/images/posts/${post.slug}/${post.image}`;
   const linkPath = `/posts/${post.slug}`;
 
   return (
     <motion.li
-      layout
-      animate={{ opacity: 1 }}
-      initial={{ opacity: 0 }}
-      exit={{ opacity: 0 }}
       className={classes.item}
+      layout
+      initial="hidden"
+      animate="enter"
+      exit="exit"
+      variants={variants}
+      transition={{ ease: 'easeOut' }}
     >
       <Link href={linkPath}>
         <a>
