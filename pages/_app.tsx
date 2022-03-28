@@ -4,15 +4,15 @@ import { AnimatePresence } from 'framer-motion';
 
 import Layout from 'components/Layout';
 import AppContextProvider from 'context/AppContext';
-import { setNProgress } from 'lib/nprogress';
-import { setTransitionFixTimeout } from 'lib/transition-fix';
+import { useNprogress } from 'hooks/nprogress';
+import { useTransitionFix } from 'hooks/transition-fix';
 import 'styles/globals.scss';
 import 'styles/nprogress.scss';
 
-setNProgress();
-setTransitionFixTimeout(1000);
-
 const MyApp = ({ Component, pageProps, router }: AppProps) => {
+  useNprogress();
+  useTransitionFix(1000);
+
   return (
     <AppContextProvider>
       <Head>

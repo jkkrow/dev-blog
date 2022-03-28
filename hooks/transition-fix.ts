@@ -1,7 +1,8 @@
 import Router from 'next/router';
+import { useEffect } from 'react';
 
-export const setTransitionFixTimeout = (timeout: number): void => {
-  Router.events.on('beforeHistoryChange', () => {
+export const setTransitionFixTimeout = (timeout: number) => {
+  return () => {
     // Create a clone of every <style> and <link> that currently affects the page. It doesn't matter
     // if Next.js is going to remove them or not since we are going to remove the copies ourselves
     // later on when the transition finishes.
@@ -35,5 +36,15 @@ export const setTransitionFixTimeout = (timeout: number): void => {
     };
 
     Router.events.on('routeChangeComplete', handler);
-  });
+  };
+};
+
+export const useTransitionFix = (delay: number) => {
+  useEffect(() => {
+    Router.events.on('beforeHistoryChange', setTransitionFixTimeout(delay));
+  }, [delay]);
+
+  useEffect(() => {
+    Router.router?.push(Router.router?.pathname);
+  }, []);
 };
