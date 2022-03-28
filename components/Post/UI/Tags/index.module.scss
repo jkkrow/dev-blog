@@ -1,12 +1,15 @@
 .tags {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 1rem;
+}
 
-  li {
-    padding: 0.5rem 1rem;
-    border: 2px solid;
-    border-radius: 5px;
-    border-color: inherit;
-  }
+.tag {
+  padding: 0.5rem 1rem;
+  border: 2px solid;
+  border-radius: 5px;
+  border-color: inherit;
+  color: inherit;
+  background-color: transparent;
 }

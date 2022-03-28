@@ -27,14 +27,14 @@
   gap: 0.5rem;
 
   h3 {
-    font-size: 2rem;
+    margin-bottom: 0.5rem;
   }
 
   p {
     display: -webkit-box;
     overflow: hidden;
     text-overflow: ellipsis;
-    line-height: 2.5rem;
+    line-height: 2.3rem;
     line-clamp: 5;
     -webkit-line-clamp: 5;
     -webkit-box-orient: vertical;

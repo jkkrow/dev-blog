@@ -1,8 +1,8 @@
 ---
 title: "Create Custom React Video Player - Part 1"
 tags: ["React", "Typescript", "CSS"]
-image: "custom-react-video-player-part-1-thumb.png"
-excerpt: "Create a custom video player in React - In Part 1, you will build a layout of video player with CSS in a responsive way."
+image: "thumbnail.png"
+excerpt: "Create a custom video player in React - build a layout of video player with CSS in a responsive way."
 date: "2022-03-05"
 isFeatured: true
 ---
@@ -356,9 +356,7 @@ To use svg in React,
 import { ReactComponent as Icon } from '<icon-path>/icon.svg';
 ```
 
-#### Playback.tsx
-
-```tsx
+```tsx:Playback.tsx
 const Playback: React.FC => () => {
   return (
     <Btn label="Play" onClick={() => {}}>
@@ -370,9 +368,7 @@ const Playback: React.FC => () => {
 
 Do the same thing with `Skip`, `Rewind`, `Settings`, `Pip`, `Fullscreen` buttons. Then our controls body would looks like:
 
-#### VideoPlayer.tsx
-
-```tsx
+```tsx:VideoPlayer.tsx
 <div className="vp-controls__body">
   <div>
     // Volume
@@ -471,9 +467,7 @@ We want to build it as a multi-stage dropdown with animation like the one you ca
 
 The dropdown will be opened whenever the settings button is clicked so let's hook up with `useState`.
 
-#### VideoPlayer.tsx
-
-```tsx
+```tsx:VideoPlayer.tsx
 const [displayDropdown, setDisplayDropdown] = useState(false);
 ```
 
@@ -484,9 +478,7 @@ const [displayDropdown, setDisplayDropdown] = useState(false);
   <Settings onToggle={() => setDisplayDropdown((prev) => !prev)} />
 ```
 
-#### Settings.tsx
-
-```tsx
+```tsx:Settings.tsx
 interface SettingsProps {
   onToggle: () => void;
 }
@@ -500,9 +492,7 @@ const Settings = React.Fc<SettingsProps> = ({ onToggle }) => {
 }
 ```
 
-#### Dropdown.tsx
-
-```tsx
+```tsx:Dropdown.tsx
 import { CSSTransition } from 'react-transition-group';
 
 interface DropdownProps {
@@ -838,15 +828,11 @@ const outsideClickHandler = (event: MouseEvent) => {
 
 To close dropdown, we need to set the `displayDropdown` state in the `VideoPlayer` component to `false`. Therefore, we'll pass a `setDisplayDropdown` function to `Dropdown` component.
 
-#### VideoPlayer.tsx
-
-```tsx
+```tsx:VideoPlayer.tsx
 <Dropdown on={displayDropdown} onClose={setDisplayDropdown} />
 ```
 
-#### Dropdown.tsx
-
-```tsx
+```tsx:Dropdown.tsx
 interface DropdownProps {
   on: boolean;
   onClose: (on: boolean) => void;

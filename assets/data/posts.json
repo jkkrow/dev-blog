@@ -21,8 +21,8 @@
     "slug": "custom-react-video-player-part-1",
     "title": "Create Custom React Video Player - Part 1",
     "tags": ["React", "Typescript", "CSS"],
-    "image": "custom-react-video-player-part-1-thumb.png",
-    "excerpt": "Create a custom video player in React - In Part 1, you will build a layout of video player with CSS in a responsive way.",
+    "image": "thumbnail.png",
+    "excerpt": "Create a custom video player in React - build a layout of video player with CSS in a responsive way.",
     "date": "2022-03-05",
     "isFeatured": true
   },
@@ -30,18 +30,36 @@
     "slug": "custom-react-video-player-part-2",
     "title": "Create Custom React Video Player - Part 2",
     "tags": ["React", "Typescript"],
-    "image": "custom-react-video-player-part-2-thumb.png",
-    "excerpt": "Create a custom video player in React - In Part 2, you will add a video functionality to built UI such as playback, volume, progress, fullscreen and etc.",
+    "image": "thumbnail.png",
+    "excerpt": "Create a custom video player in React - add a video functionality to built UI such as playback, volume, progress, fullscreen and etc.",
     "date": "2022-03-12",
-    "isFeatured": true
+    "isFeatured": false
   },
   {
     "slug": "custom-react-video-player-part-3",
     "title": "Create Custom React Video Player - Part 3",
     "tags": ["React", "Typescript"],
-    "image": "custom-react-video-player-part-3-thumb.png",
-    "excerpt": "Create a custom video player in React - In Part 3, you will implement Adaptive Bitrate Streaming to allow to play format like HLS or MPEG.",
+    "image": "thumbnail.png",
+    "excerpt": "Create a custom video player in React - implement Adaptive Bitrate Streaming to allow to play format like HLS or MPEG.",
     "date": "2022-03-19",
+    "isFeatured": false
+  },
+  {
+    "slug": "aws-vod-streaming-video-upload",
+    "title": "AWS VOD Streaming - Upload Video to AWS S3",
+    "tags": ["AWS", "React", "Express", "MongoDB", "Typescript"],
+    "image": "thumbnail.png",
+    "excerpt": "Build a video-on-demand (VOD) streaming app with AWS - allow users to upload video to AWS S3 with multipart upload and presigned url.",
+    "date": "2022-03-26",
+    "isFeatured": true
+  },
+  {
+    "slug": "aws-vod-streaming-video-convert",
+    "title": "AWS VOD Streaming - Convert Video with AWS Lambda & MediaConvert",
+    "tags": ["AWS", "MongoDB", "Javascript"],
+    "image": "thumbnail.png",
+    "excerpt": "Build a video-on-demand (VOD) streaming app with AWS - convert uploaded video to adaptive media format (CMAF) with AWS Lambda and MediaConvert.",
+    "date": "2022-04-02",
     "isFeatured": true
   }
 ]

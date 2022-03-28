@@ -37,39 +37,39 @@ interface MarkdownProps {
   content: string;
 }
 
+const LinkedHeading = (level: 1 | 2 | 3) => {
+  const heading = ({ children }: PropsWithChildren<HeadingProps>) => {
+    const CustomTag = `h${level}` as keyof JSX.IntrinsicElements;
+    const text = children[0] as string;
+    const convertedText = text
+      .toLowerCase()
+      .replace(/&/g, 'and')
+      .replace(/[^\w\s]/gi, '')
+      .replace(/\s+/g, '-');
+
+    return (
+      <CustomTag id={convertedText}>
+        <a href={`#${convertedText}`}>{children}</a>
+      </CustomTag>
+    );
+  };
+
+  return heading;
+};
+
 const Markdown: React.FC<MarkdownProps> = ({ slug, content }) => {
   const { theme } = useContext(AppContext);
 
   const colorTheme = theme === 'light' ? lightTheme : darkTheme;
-
-  const generateLinkedHeading = (level: 1 | 2 | 3) => {
-    const heading = ({ children }: PropsWithChildren<HeadingProps>) => {
-      const CustomTag = `h${level}` as keyof JSX.IntrinsicElements;
-      const text = children[0] as string;
-      const convertedText = text
-        .toLowerCase()
-        .replace(/&/g, 'and')
-        .replace(/[^\w\s]/gi, '')
-        .replace(/\s+/g, '-');
-
-      return (
-        <CustomTag id={convertedText}>
-          <a href={`#${convertedText}`}>{children}</a>
-        </CustomTag>
-      );
-    };
-
-    return heading;
-  };
 
   return (
     <section className={classes.markdown}>
       <ReactMarkdown
         rehypePlugins={[rehypeRaw]}
         components={{
-          h1: generateLinkedHeading(1),
-          h2: generateLinkedHeading(2),
-          h3: generateLinkedHeading(3),
+          h1: LinkedHeading(1),
+          h2: LinkedHeading(2),
+          h3: LinkedHeading(3),
 
           a: ({ children, href }) => {
             const isHashLink = href![0] === '#';
@@ -120,20 +120,31 @@ const Markdown: React.FC<MarkdownProps> = ({ slug, content }) => {
               return <code className={classes.inline}>{children}</code>;
             }
 
-            const language = (className || '').split('-')[1];
+            const language = (className || '').split('language-')[1];
+            const [type, label] = language.split(':');
 
             return (
-              <SyntaxHighlighter
-                style={colorTheme}
-                language={language}
-                customStyle={{
-                  padding: '2rem 2rem 0 2rem',
-                  fontSize: '1.5rem',
-                  borderRadius: '5px',
-                }}
-              >
-                {children}
-              </SyntaxHighlighter>
+              <>
+                {label && (
+                  <div
+                    className={classes.label}
+                    style={colorTheme['pre[class*="language-"]']}
+                  >
+                    {label}
+                  </div>
+                )}
+                <SyntaxHighlighter
+                  style={colorTheme}
+                  language={type}
+                  customStyle={{
+                    padding: '2rem 2rem 0 2rem',
+                    fontSize: '1.5rem',
+                    borderRadius: 0,
+                  }}
+                >
+                  {children}
+                </SyntaxHighlighter>
+              </>
             );
           },
         }}

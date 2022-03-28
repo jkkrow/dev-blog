@@ -19,7 +19,6 @@ const HomePage = ({
       <Head>
         <title>Blog</title>
         <meta name="description" content="Fullstack web development blog" />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
       <Hero />
       <PostGrid posts={posts} label="Featured Posts" />

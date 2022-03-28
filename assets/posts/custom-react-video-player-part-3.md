@@ -1,13 +1,13 @@
 ---
 title: "Create Custom React Video Player - Part 3"
 tags: ["React", "Typescript"]
-image: "custom-react-video-player-part-3-thumb.png"
-excerpt: "Create a custom video player in React - In Part 3, you will implement Adaptive Bitrate Streaming to allow to play format like HLS or MPEG."
+image: "thumbnail.png"
+excerpt: "Create a custom video player in React - implement Adaptive Bitrate Streaming to allow to play format like HLS or MPEG."
 date: "2022-03-19"
-isFeatured: true
+isFeatured: false
 ---
 
-This is the last section of creating custom react video player. By far, we've built layout of video player in [Part 1](custom-react-video-player-part-1), and implemented functionality to it in [Part 2](custom-react-video-player-part-2). As a final step, we're going to add a **Adaptive Bitrate Streaming** feature.
+This is the last section of creating custom react video player. By far, we've built layout of video player in [Part 1](/posts/custom-react-video-player-part-1), and implemented functionality to it in [Part 2](/posts/custom-react-video-player-part-2). As a final step, we're going to add a **Adaptive Bitrate Streaming** feature.
 
 ## What is Adaptive Bitrate Streaming
 
@@ -23,7 +23,11 @@ These formats are collection of multiple quality versions of same video files an
 
 This concept of **segment** is the key thing of adaptive streaming. It allows to change video's resolution in the middle of streaming without starting over.
 
-Here is how it works. First, the client downloads a manifest file that describes the available stream segments and their respective bit rates. During stream start-up, the client usually requests the segments from the lowest bit rate stream. If the client finds that the network throughput is greater than the bit rate of the downloaded segment, then it will request a higher bit rate segment. Later, if the client finds that the network throughput has deteriorated, it will request a lower bit rate segment.
+Here is how it works. 
+* First, the client downloads a manifest file that describes the available stream segments and their respective bit rates. 
+* During stream start-up, the client usually requests the segments from the lowest bit rate stream.
+* If the client finds that the network throughput is greater than the bit rate of the downloaded segment, then it will request a higher bit rate segment.
+* Later, if the client finds that the network throughput has deteriorated, it will request a lower bit rate segment.
 
 That is an abstraction of how ABR works. You can find more detailed explanation in [here](https://en.wikipedia.org/wiki/Adaptive_bitrate_streaming#Benefits_of_adaptive_bitrate_streaming). However, since this post is all about just consuming pre-populated videos, let's enough talking and implement this feature in our video player.
 
@@ -153,9 +157,7 @@ Inside of ui folder, you can see that there are various ui components in shaka p
 
 What we're interested in is `resolution_selection.js` file. In there, you can find function named `updateResolutionSelection_`.
 
-#### node_modules/shaka-player/ui/resolution_selection.js
-
-```js
+```js:node_modules/shaka-player/ui/resolution_selection.js
 /** @private */
 updateResolutionSelection_() {
   /** @type {!Array.<shaka.extern.Track>} */
@@ -310,9 +312,7 @@ const videoLoadedHandler = useCallback(() => {
 
 Then, let's add resolution list in dropdown's menu. We have to check if there is more than one resolution to select in case of playing non-adaptive media format such as mp4.
 
-#### Dropdown.tsx
-
-```tsx
+```tsx:Dropdown.tsx
 const selectResolutionHandler = useCallback(
   (resolution: shaka.extern.Track | 'auto') => {
     return () => {
@@ -434,9 +434,7 @@ Therefore, we have to manually update the state. We'll update the resolutions li
 
 To do this, we need to use `setInterval` function. Let's create another custom hook for this, just as `useTimeout` we created in Part 2.
 
-#### timer-hook.ts
-
-```ts
+```ts:timer-hook.ts
 export const useInterval = (): [
   (callback: () => void, delay: number, initialLoad?: boolean) => void,
   () => void
@@ -465,9 +463,7 @@ export const useInterval = (): [
 };
 ```
 
-#### VideoPlayer.tsx
-
-```tsx
+```tsx:VideoPlayer.tsx
 const [setResolutionInterval, clearResolutionInterval] = useInterval();
 
 useEffect(() => {

@@ -27,7 +27,6 @@
   h1,
   h2,
   h3,
-  h4,
   ul {
     a {
       display: flex;
@@ -126,9 +125,21 @@
   }
 }
 
+.label {
+  width: max-content;
+  padding: 0.5rem 1.5rem !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  font-size: 1.5rem !important;
+  font-weight: bold;
+
+  + pre {
+    margin: 0 !important;
+  }
+}
+
 .inline {
-  padding: 0.25rem 0.5rem;
-  border-radius: 3px;
+  padding: 0.3rem 0.7rem;
   font-family: Inconsolata, Monaco, Consolas, 'Courier New', Courier, monospace;
   font-size: 1.5rem;
   color: var(--text-theme-primary);

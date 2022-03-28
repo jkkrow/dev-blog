@@ -11,7 +11,11 @@ const Tags: React.FC<TagsProps> = ({ tags }) => {
     <ul className={classes.tags}>
       {tags.map((tag) => (
         <li key={tag}>
-          <Link href={`/posts?tag=${tag}`}>{tag}</Link>
+          <Link href={`/posts?tag=${tag}`}>
+            <a>
+              <button className={classes.tag}>{tag}</button>
+            </a>
+          </Link>
         </li>
       ))}
     </ul>

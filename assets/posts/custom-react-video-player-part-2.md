@@ -1,27 +1,27 @@
 ---
 title: "Create Custom React Video Player - Part 2"
 tags: ["React", "Typescript"]
-image: "custom-react-video-player-part-2-thumb.png"
-excerpt: "Create a custom video player in React - In Part 2, you will add a video functionality to built UI such as playback, volume, progress, fullscreen and etc."
+image: "thumbnail.png"
+excerpt: "Create a custom video player in React - add a video functionality to built UI such as playback, volume, progress, fullscreen and etc."
 date: "2022-03-12"
-isFeatured: true
+isFeatured: false
 ---
 
-In [previous post](custom-react-video-player-part-1), we've built the layout of video player. Currently this does not doing anything so let's add a functionality to it. These are the features we're going to implement.
+In [previous post](/posts/custom-react-video-player-part-1), we've built the layout of video player. Currently this does not doing anything so let's add a functionality to it. These are the features we're going to implement.
 
-* [Playback](#playback)
-* [Show & Hide Controls](#show-and-hide-controls)
-* [Volume](#volume)
-* [Time](#time)
-* [Progress](#progress)
-* [Skip & Rewind](#rewind-and-skip)
-* [Fullscreen](#fullscreen)
-* [Picture in Picture](#picture-in-picture)
-* [Settings](#settings)
-* [Loader](#loader)
-* [Keyboard Control](#keyboard-control)
-* [Error Handling](#error-handler)
-* [Optimization](#optimization)
+- [Playback](#playback)
+- [Show & Hide Controls](#show--hide-controls)
+- [Rewind & Skip](#rewind--skip)
+- [Volume](#volume)
+- [Time](#time)
+- [Progress](#progress)
+- [Fullscreen](#fullscreen)
+- [Picture in Picture](#picture-in-picture)
+- [Settings](#settings)
+- [Loader](#loader)
+- [Keyboard Control](#keyboard-control)
+- [Error Handler](#error-handler)
+- [Optimization](#optimization)
 
 After implementing these features, our video player will work like this:
 
@@ -93,9 +93,7 @@ The `Playback` component takes a `playbackState` as a props.
 <Playback isPlaying={playbackState} />
 ```
 
-#### Playback.tsx
-
-```tsx
+```tsx:Playback.tsx
 interface PlaybackProps {
   isPlaying: boolean;
   onToggle: () => void;
@@ -183,9 +181,7 @@ While video is playing, hide video controls if user is not interacting with it. 
 
 When using `setTimeout` in React compoennt, we should remove the timer before unmounting component in order to prevent memory leak. Implementing all those logics into `VideoPlayer` component would be messy, therefore let's create an extra hook that handling `setTimeout`.
 
-#### timer-hook.ts
-
-```ts
+```ts:timer-hook.ts
 import { useCallback, useEffect, useRef } from 'react';
 
 export const useTimeout = (): [
@@ -368,9 +364,7 @@ With volumeState, volume UI should be responsive depends on value. We can simply
 
 For controlling, we've built `<input type="range">` to change volume by dragging it. Bind input handler and volumeState to `<input>`.
 
-#### Volume.tsx
-
-```tsx
+```tsx:Volume.tsx
 interface VolumeProps {
   volume: number;
   onToggle: () => void;
@@ -414,9 +408,7 @@ Currently, our video player always starts with volume value of 1, which we defin
 
 Therefore, we want to store volume date also in localStorage. For that, let's create another custom hook like we did with `setTimeout`.
 
-#### storage-hook.ts
-
-```ts
+```ts:storage-hook.ts
 import { useCallback, useState } from 'react';
 
 export const useLocalStorage = <T = any>(
@@ -442,9 +434,7 @@ export const useLocalStorage = <T = any>(
 };
 ```
 
-#### VideoPlayer.tsx
-
-```tsx
+```tsx:VideoPlayer.tsx
 const [volumeState, setVolumeState] = useLocalStorage('video-volume', 1)
 ```
 
@@ -481,9 +471,7 @@ const formattedRemainedTime = formatTime(Math.round(duration) - Math.round(curre
 
 We'll extract formatting logic into seperate file to make codes lean.
 
-#### format.ts
-
-```ts
+```ts:format.ts
 export const formatTime = (timeInSeconds: number): string => {
   const result = new Date(Math.round(timeInSeconds) * 1000)
     .toISOString()
@@ -513,9 +501,7 @@ setRemainedTimeUI(formattedRemainedTime);
 <Time time={remainedTimeUI} />
 ```
 
-#### Time.tsx
-
-```tsx
+```tsx:Time.tsx
 interface TimeProps {
   time: string;
 }
@@ -594,9 +580,7 @@ const videoLoadedHandler = () => {
 }
 ```
 
-#### Progress.tsx
-
-```tsx
+```tsx:Progress.tsx
 <div className="vp-progress__range">
   <div className="vp-progress__range--background" />
   <div
@@ -630,9 +614,7 @@ const [seekTooltip, setSeekTooltip] = useState('00:00');
 const [seekTooltipPosition, setSeekTooltipPosition] = useState('');
 ```
 
-#### Progress.tsx
-
-```tsx
+```tsx:Progress.tsx
 <div className="vp-progress">
   <div className="vp-progress__range">
     // ...
@@ -716,9 +698,7 @@ const seekInputHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
 };
 ```
 
-#### Progress.tsx
-
-```tsx
+```tsx:Progress.tsx
 interface ProgressProps {
   videoDuration: number;
   bufferProgress: number;
@@ -792,9 +772,7 @@ We want to toggle fullscreen when double clicking video as well as clicking butt
 <Fullscreen isFullscreen={fullscreenState} onToggle={toggleFullscreenHandler} />
 ```
 
-#### Fullscreen.tsx
-
-```tsx
+```tsx:Fullscreen.tsx
 interface FullscreenProps {
   isFullscreen: boolean;
   onToggle: () => void;
@@ -870,9 +848,7 @@ const videoLoadedHandler = () => {
 <Pip isPipMode={pipState} onToggle={togglePipHandler} />
 ```
 
-#### Pip.tsx
-
-```tsx
+```tsx:Pip.tsx
 interface PipProps {
   isPipMode: boolean;
   onToggle: () => void;
@@ -917,9 +893,7 @@ const changePlaybackRateHandler = (playbackRate: number) => {
 
 Since we've already build the workflow of dropdown, we only need to add operation to it.
 
-#### Dropdown.tsx
-
-```tsx
+```tsx:Dropdown.tsx
 const selectMenuHandler = (type: 'speed' | 'resolution') => {
   return () => {
     setIsIndex(false);
@@ -1129,9 +1103,7 @@ For that, I've prepared another component called `KeyAction`, which you can find
 
 We want to show animation effect on rewind and skip function. In the `KeyAction` component, It takes ref with `forwardRef` and connects it to `rewindRef` and `skipRef` with `useImperativeHandle`. Therefore, we can access to these refs in parent component with `useRef`.
 
-#### VideoPlayer.tsx
-
-```tsx
+```tsx:VideoPlayer.tsx
 import KeyAction, { KeyActionHandle } from '.UI/KeyAction/KeyAction';
 ```
 
@@ -1361,9 +1333,7 @@ Also, we can do similar job with components. You can wrap components with `React
 
 For example:
 
-#### Playback.tsx
-
-```tsx
+```tsx:Playback.tsx
 import { memo } from 'react';
 
 // ...
