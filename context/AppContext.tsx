@@ -4,18 +4,18 @@ export type Theme = 'light' | 'dark';
 
 export const AppContext = createContext<{
   theme: Theme | null;
-  ref: React.RefObject<HTMLElement> | null;
+  headerRef: React.RefObject<HTMLElement> | null;
   setTheme: () => void;
 }>({
   theme: null,
-  ref: null,
+  headerRef: null,
   setTheme: () => {},
 });
 
 const AppContextProvider: React.FC = ({ children }) => {
   const [theme, setTheme] = useState<Theme | null>(null);
 
-  const contextRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const storedTheme = localStorage.getItem('blog-theme') as Theme | null;
@@ -36,7 +36,7 @@ const AppContextProvider: React.FC = ({ children }) => {
     <AppContext.Provider
       value={{
         theme,
-        ref: contextRef,
+        headerRef,
         setTheme: toggleThemeHandler,
       }}
     >

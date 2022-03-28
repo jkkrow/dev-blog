@@ -5,7 +5,7 @@ import { Fragment } from 'react';
 
 import PostGrid from 'components/Post/Grid';
 import { Post } from 'types/post';
-import { getAllPosts, getPostsByTag } from 'lib/posts-util';
+import { getAllPosts, getPostsByTag } from 'lib/posts';
 
 interface Props {
   posts: Post[];

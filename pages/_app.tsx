@@ -1,36 +1,16 @@
 import Head from 'next/head';
-import Router from 'next/router';
 import type { AppProps } from 'next/app';
 import { AnimatePresence } from 'framer-motion';
-import nProgress from 'nprogress';
 
 import Layout from 'components/Layout';
 import AppContextProvider from 'context/AppContext';
+import { setNProgress } from 'lib/nprogress';
+import { setTransitionFixTimeout } from 'lib/transition-fix';
 import 'styles/globals.scss';
 import 'styles/nprogress.scss';
 
-let timer: any;
-let state: 'loading' | 'stop';
-const delay = 250;
-
-const load = () => {
-  if (state === 'loading') return;
-
-  state = 'loading';
-  timer = setTimeout(() => {
-    nProgress.start();
-  }, delay);
-};
-
-const stop = () => {
-  state = 'stop';
-  clearTimeout(timer);
-  nProgress.done();
-};
-
-Router.events.on('routeChangeStart', load);
-Router.events.on('routeChangeComplete', stop);
-Router.events.on('routeChangeError', stop);
+setNProgress();
+setTransitionFixTimeout(1000);
 
 const MyApp = ({ Component, pageProps, router }: AppProps) => {
   return (

@@ -5,7 +5,7 @@ import { Fragment } from 'react';
 import Hero from 'components/Home/Hero';
 import PostGrid from 'components/Post/Grid';
 import { Post } from 'types/post';
-import { getFeaturedPosts } from 'lib/posts-util';
+import { getFeaturedPosts } from 'lib/posts';
 
 interface Props {
   posts: Post[];

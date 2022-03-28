@@ -7,21 +7,21 @@ import classes from './index.module.scss';
 
 const Panel: React.FC = () => {
   const [isIntersecting, setIsIntersecting] = useState(true);
-  const { ref } = useContext(AppContext);
+  const { headerRef } = useContext(AppContext);
 
   useEffect(() => {
-    if (!ref || !ref.current) return;
+    if (!headerRef || !headerRef.current) return;
 
     const observer = new IntersectionObserver(([entry], observer) => {
       setIsIntersecting(entry.isIntersecting);
     });
 
-    observer.observe(ref.current);
+    observer.observe(headerRef.current);
 
     return () => {
       observer.disconnect();
     };
-  }, [ref]);
+  }, [headerRef]);
 
   const scrollTopHandler = () => {
     document.documentElement.scrollTo({ top: 0, behavior: 'smooth' });

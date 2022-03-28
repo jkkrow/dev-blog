@@ -7,10 +7,10 @@ import { AppContext } from 'context/AppContext';
 import classes from './index.module.scss';
 
 const Header: React.FC = () => {
-  const { ref } = useContext(AppContext);
+  const { headerRef } = useContext(AppContext);
 
   return (
-    <header className={classes.header} ref={ref}>
+    <header className={classes.header} ref={headerRef}>
       <Logo />
       <Theme />
       <nav>
