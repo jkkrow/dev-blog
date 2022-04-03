@@ -862,6 +862,6 @@ const Dropdown: React.FC<DropdownProps> = ({ on, onClose }) => {
 
 Alright! That's all for now. We've just built quite fancy looking custom UI of video player which is also responsive.
 
-That was quite a lot of work, but this is only Part 1 of 3. Still, there are lots of work to do. Now we've finished building barebone of video player, let's continue to Part 2 to add some actual logics to what we've just built.
+That was quite a lot of work, but this is only Part 1 of 3. Still, there are lots of work to do. Now we've finished building barebone of video player, let's continue to [Part 2](/posts/custom-react-video-player-part-2) to add some actual logics to what we've just built.
 
 Before moving on, if you want to review your code with finished one, don't forget to check out [Github](https://github.com/jkkrow/custom-react-video-player-layout).

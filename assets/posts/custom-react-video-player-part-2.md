@@ -987,7 +987,6 @@ const hideLoaderHandler = () => {
 However, this isn't enough for realistic user experience. If you playing around with progress bar, jumping to position where the buffer is downloaded, you can see `waiting` event fired instantly even though it is playable without further buffering.
 
 <figure>
-  <img src="instant-loading.jpg" alt="Loading shows unnecessarily">
   <img src="instant-loading.gif" alt="Loading shows unnecessarily">
   <figcaption>Loading shows unnecessarily</figcaption>
 </figure>
@@ -1094,10 +1093,7 @@ We want to show some UI effect when pressing keyboard for nice user experience.
 
 Like below:
 
-<figure>
-  <img src="key-rewind-skip.jpg" alt="Control rewind & skip with key">
-  <img src="key-rewind-skip.gif" alt="Control rewind & skip with key">
-</figure>
+![key-rewind-skip](key-rewind-skip.gif)
 
 For that, I've prepared another component called `KeyAction`, which you can find in [here](https://github.com/jkkrow/custom-react-video-player-functionality/tree/main/src/components/Player/UI/KeyAction).
 
@@ -1191,10 +1187,7 @@ const skipHandler = () => {
 
 Next, let's also add effect on volume change. This time, we want to show volume UI for few seconds when volume is changed, and then hide it after seconds.
 
-<figure>
-  <img src="key-volume.jpg" alt="Control volume with key">
-  <img src="key-volume.gif" alt="Control volume with key">
-</figure>
+![key-volume](key-volume.gif)
 
 In `KeyAction`, volume UI is using `CSSTransition` so we don't have to directly animate element like above. Instead, set the state of displaying volume UI with `setTimeout`.
 
@@ -1347,4 +1340,4 @@ Now `Playback` component will be re-rendered only when related state is changed.
 
 Great! That's all for implementing video functionalities. Now we have fully functioning video player! With the workflow of implementation, you can even add extra features on your need - such as navigating to next video in a playlist, or adding captions or subtitles. I'm pretty sure you can do these extra jobs on your own.
 
-Besides that, there is one missing part in our video player: **Adaptive Bitrate Streaming**, which is critical part of modern video streaming. We're gonna work on this final job in next post. Before moving on, You can review finished code of this part in [here](https://github.com/jkkrow/custom-react-video-player-functionality).
+Besides that, there is one missing part in our video player: **Adaptive Bitrate Streaming**, which is critical part of modern video streaming. We're gonna work on this final job in [next post](/posts/custom-react-video-player-part-3). Before moving on, You can review finished code of this part in [here](https://github.com/jkkrow/custom-react-video-player-functionality).
