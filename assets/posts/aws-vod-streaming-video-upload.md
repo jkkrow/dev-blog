@@ -7,7 +7,14 @@ date: "2022-04-02"
 isFeatured: true
 ---
 
-In this tutorial, we'll implement video upload process with AWS S3. What we're going to achieve is allowing users of our app to upload video into our S3 bucket, so that it can be shared to users. You can think of this as streaming services like Youtube or Vimeo.
+In this tutorial, we'll implement the first part of workflow - video upload in AWS S3 and data store in DynamoDB.
+
+<figure>
+  <img src="overview.png" alt="overview">
+  <figcaption>Workflow of VOD streaming</figcaption>
+</figure>
+
+What we're going to achieve is allowing users of our app to upload video into our S3 bucket, so that it can be shared to users. You can think of this as streaming services like Youtube or Vimeo.
 
 There are couple of considerations to make this work. First, uploading video is not as same as uploading image. Since videos are much larger than images, it takes long to be finished and therefore more vulnerable to network issues. So we need an appropriate method to handle video upload.
 
@@ -58,7 +65,7 @@ Combining the process of these two method, the final upload workflow looks like 
 
 ### AWS Configuration
 
-Before we start, we need to create a AWS S3 bucket and DynamoDB table. Then we should configure it so we can use it from server.
+Before we begin, we need to create a AWS S3 bucket and DynamoDB table. Then we should configure it so we can use it from server.
 
 Let's create S3 bucket first. Go to [AWS S3 console](https://s3.console.aws.amazon.com/s3/home) and click *Create bucket*.
 

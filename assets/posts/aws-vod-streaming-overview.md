@@ -2,7 +2,7 @@
 title: "AWS VOD Streaming - Overview"
 tags: ["AWS"]
 image: "thumbnail.png"
-excerpt: "Build a video-on-demand (VOD) streaming app with AWS"
+excerpt: "Build a video-on-demand (VOD) streaming service with multiple AWS services - AWS S3, DynamoDB, Lambda, MediaConvert and etc"
 date: "2022-04-02"
 isFeatured: true
 ---
@@ -33,7 +33,7 @@ A diagram below is the workflow of what we're going to implement:
 ## Prerequisites
 
 * You shoud have an AWS account.
-* This tutorial uses multiple AWS services. You should be awared of that one of the services (MediaConvert) is **NOT FREE**. If you're following the tutorial along, you might be charged for using it.
+* This tutorial uses multiple AWS services. You should be awared of that one of the services (MediaConvert) is **NOT FREE**. If you're following the tutorial along, you will be charged for using it.
 
 ## Reference
 
@@ -42,17 +42,12 @@ As a reference, you can find a source code of demo app in [Github](https://githu
 Download it and open the project folder in your text editor. Then run following commands inside terminal to start project.
 
 ```bash
-// install backend dependencies
 npm install
 
 cd frontend
-
-// install frontend depedencies
 npm install 
 
 cd ../
-
-// start both frontend and backend concurrently
 npm run dev 
 ```
 
