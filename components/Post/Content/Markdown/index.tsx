@@ -54,7 +54,9 @@ const LinkedHeading = (level: 1 | 2 | 3) => {
 
     return (
       <CustomTag id={convertedText}>
-        <a href={`#${convertedText}`}>{children}</a>
+        <a className={classes.hash} href={`#${convertedText}`}>
+          {children}
+        </a>
       </CustomTag>
     );
   };
@@ -80,7 +82,11 @@ const Markdown: React.FC<MarkdownProps> = ({ slug, content }) => {
             const isHashLink = href![0] === '#';
 
             if (isHashLink) {
-              return <a href={href}>{children}</a>;
+              return (
+                <a className={classes.hash} href={href}>
+                  {children}
+                </a>
+              );
             }
 
             return (
