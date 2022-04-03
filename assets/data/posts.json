@@ -1,23 +1,5 @@
 [
   {
-    "slug": "getting-started-with-nextjs",
-    "title": "Getting Started with NextJS",
-    "tags": ["nextjs", "javascript"],
-    "image": "getting-started-nextjs.png",
-    "excerpt": "NextJS is a the React framework for production - it makes building fullstack React apps and sites a breeze and ships with built-in SSR.",
-    "date": "2021-10-16",
-    "isFeatured": true
-  },
-  {
-    "slug": "mastering-javascript",
-    "title": "Mastering JavaScript",
-    "tags": ["javascript"],
-    "image": "mastering-js-thumb.png",
-    "excerpt": "JavaScript is the most important programming language for web development. You probably don't know it well enough!",
-    "date": "2021-10-30",
-    "isFeatured": false
-  },
-  {
     "slug": "custom-react-video-player-part-1",
     "title": "Create Custom React Video Player - Part 1",
     "tags": ["React", "Typescript", "CSS"],
@@ -45,21 +27,21 @@
     "isFeatured": false
   },
   {
-    "slug": "aws-vod-streaming-video-upload",
-    "title": "AWS VOD Streaming - Upload Video to AWS S3",
-    "tags": ["AWS", "React", "Express", "MongoDB", "Typescript"],
+    "slug": "aws-vod-streaming-overview",
+    "title": "AWS VOD Streaming - Overview",
+    "tags": ["AWS"],
     "image": "thumbnail.png",
-    "excerpt": "Build a video-on-demand (VOD) streaming app with AWS - allow users to upload video to AWS S3 with multipart upload and presigned url.",
-    "date": "2022-03-26",
+    "excerpt": "Build a video-on-demand (VOD) streaming app with multiple AWS services - S3, DynamoDB, Lambda, MediaConvert and etc",
+    "date": "2022-04-02",
     "isFeatured": true
   },
   {
-    "slug": "aws-vod-streaming-video-convert",
-    "title": "AWS VOD Streaming - Convert Video with AWS Lambda & MediaConvert",
-    "tags": ["AWS", "MongoDB", "Javascript"],
+    "slug": "aws-vod-streaming-video-upload",
+    "title": "AWS VOD Streaming - Upload Video to AWS S3",
+    "tags": ["AWS", "React", "NodeJS", "Typescript"],
     "image": "thumbnail.png",
-    "excerpt": "Build a video-on-demand (VOD) streaming app with AWS - convert uploaded video to adaptive media format (CMAF) with AWS Lambda and MediaConvert.",
-    "date": "2022-04-02",
+    "excerpt": "Build a video-on-demand (VOD) streaming service with AWS - allow users to upload video to AWS S3 with multipart upload and presigned url.",
+    "date": "2022-04-03",
     "isFeatured": true
   }
 ]

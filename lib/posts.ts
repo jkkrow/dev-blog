@@ -19,7 +19,11 @@ export const getFeaturedPosts = (): Post[] => {
 export const getPostsByTag = (tag: string | string[]): Post[] => {
   const allPosts = getAllPosts();
   const selectedTag = tag instanceof Array ? tag[0] : tag;
-  return allPosts.filter((post) => post.tags.includes(selectedTag));
+  return allPosts.filter((post) =>
+    post.tags
+      .map((tag) => tag.toLowerCase())
+      .includes(selectedTag.toLowerCase())
+  );
 };
 
 export const getPostDetail = (slug: string): PostDetail => {

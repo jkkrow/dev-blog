@@ -12,9 +12,9 @@ interface PostItemProps {
 }
 
 const variants = {
-  hidden: { opacity: 0, y: -50 },
-  enter: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -50 },
+  hidden: { opacity: 0 },
+  enter: { opacity: 1 },
+  exit: { opacity: 0 },
 };
 
 const PostItem: React.FC<PostItemProps> = ({ post }) => {

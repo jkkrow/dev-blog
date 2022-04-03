@@ -40,6 +40,11 @@ interface MarkdownProps {
 const LinkedHeading = (level: 1 | 2 | 3) => {
   const heading = ({ children }: PropsWithChildren<HeadingProps>) => {
     const CustomTag = `h${level}` as keyof JSX.IntrinsicElements;
+
+    if (!children) {
+      return <CustomTag>{children}</CustomTag>;
+    }
+
     const text = children[0] as string;
     const convertedText = text
       .toLowerCase()

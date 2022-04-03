@@ -1,11 +1,11 @@
 import Router from 'next/router';
 import { useEffect } from 'react';
 
-export const setTransitionFixTimeout = (timeout: number) => {
+const setTransitionFixTimeout = (timeout: number) => {
   return () => {
-    // Create a clone of every <style> and <link> that currently affects the page. It doesn't matter
-    // if Next.js is going to remove them or not since we are going to remove the copies ourselves
-    // later on when the transition finishes.
+    // Create a clone of every <style> and <link> that currently affects the page.
+    // It doesn't matter if Next.js is going to remove them or not
+    // since we are going to remove the copies ourselves later on when the transition finishes.
     const nodes = document.querySelectorAll(
       'link[rel=stylesheet], style:not([media=x])'
     );
@@ -14,8 +14,8 @@ export const setTransitionFixTimeout = (timeout: number) => {
     nodes.forEach((el) => copies.push(el.cloneNode(true) as HTMLElement));
 
     for (let copy of copies) {
-      // Remove Next.js' data attributes so the copies are not removed from the DOM in the route
-      // change process.
+      // Remove Next.js' data attributes so the copies are not removed
+      // from the DOM in the route change process.
       copy.removeAttribute('data-n-p');
       copy.removeAttribute('data-n-href');
 
@@ -45,6 +45,7 @@ export const useTransitionFix = (delay: number) => {
   }, [delay]);
 
   useEffect(() => {
-    Router.router?.push(Router.router?.pathname);
+    if (process.env.NODE_ENV === 'development') return;
+    setTransitionFixTimeout(0)();
   }, []);
 };

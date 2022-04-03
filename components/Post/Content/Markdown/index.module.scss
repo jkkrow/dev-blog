@@ -16,6 +16,10 @@
     list-style: initial;
   }
 
+  ol {
+    padding: 0 2rem;
+  }
+
   a {
     text-decoration: underline;
   }
@@ -127,11 +131,11 @@
 
 .label {
   width: max-content;
-  padding: 0.5rem 1.5rem !important;
+  padding: 1rem 2rem !important;
   margin: 0 !important;
   border-radius: 0 !important;
   font-size: 1.5rem !important;
-  font-weight: bold;
+  border-bottom: 1px solid var(--text-theme-secondary);
 
   + pre {
     margin: 0 !important;
