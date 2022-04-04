@@ -24,13 +24,6 @@
     text-decoration: underline;
   }
 
-  h1 a,
-  h2 a,
-  h3 a,
-  ul a {
-    text-decoration: none;
-  }
-
   pre {
     &::-webkit-scrollbar {
       background-color: transparent;
@@ -68,6 +61,7 @@
   display: flex;
   align-items: center;
   width: max-content;
+  text-decoration: none !important;
 
   &::after {
     content: '#';

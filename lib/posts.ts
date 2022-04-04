@@ -16,14 +16,16 @@ export const getFeaturedPosts = (): Post[] => {
   return allPosts.filter((post) => post.isFeatured);
 };
 
-export const getPostsByTag = (tag: string | string[]): Post[] => {
+export const getPostsByTags = (tag: string | string[]): Post[] => {
   const allPosts = getAllPosts();
-  const selectedTag = tag instanceof Array ? tag[0] : tag;
-  return allPosts.filter((post) =>
-    post.tags
-      .map((tag) => tag.toLowerCase())
-      .includes(selectedTag.toLowerCase())
-  );
+  const filteredPosts =
+    tag instanceof Array
+      ? allPosts.filter((post) =>
+          tag.some((queryTag) => post.tags.includes(queryTag))
+        )
+      : allPosts.filter((post) => post.tags.includes(tag));
+
+  return filteredPosts;
 };
 
 export const getPostDetail = (slug: string): PostDetail => {
