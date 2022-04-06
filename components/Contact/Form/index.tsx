@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { motion } from 'framer-motion';
+import HCaptcha from '@hcaptcha/react-hcaptcha';
 
 import Input from '../Input';
 import { useForm } from 'hooks/form';
@@ -29,20 +30,15 @@ const ContactForm: React.FC = () => {
     message: { value: '', isValid: false },
   });
 
-  const { status, error, api } = useApi(
-    sendContactData({
-      email: formState.inputs.email.value,
-      name: formState.inputs.name.value,
-      subject: formState.inputs.subject.value,
-      message: formState.inputs.message.value,
-    })
-  );
+  const { status, error, api } = useApi();
 
   const [transitionFinished, setTransitionFinished] = useState(true);
   const [transitionSuspended, setTransitionSuspended] = useState(false);
 
   const finishedTimer = useRef<ReturnType<typeof setTimeout>>();
   const suspendedTiemr = useRef<ReturnType<typeof setTimeout>>();
+
+  const hcaptchaRef = useRef<any>();
 
   const sendEmailHandler = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -56,7 +52,28 @@ const ContactForm: React.FC = () => {
       return;
     }
 
-    await api();
+    setTransitionFinished(false);
+    hcaptchaRef.current.execute();
+  };
+
+  const hCaptchaChangeHandler = async (token: string | null) => {
+    if (!token) return;
+
+    await api(
+      sendContactData({
+        form: {
+          email: formState.inputs.email.value,
+          name: formState.inputs.name.value,
+          subject: formState.inputs.subject.value,
+          message: formState.inputs.message.value,
+        },
+        token,
+      })
+    );
+  };
+
+  const hCaptchaCloseHandler = () => {
+    setTransitionFinished(true);
   };
 
   useEffect(() => {
@@ -163,6 +180,13 @@ const ContactForm: React.FC = () => {
             validators={[VALIDATOR_REQUIRE()]}
             submitted={isSuccess}
             onForm={setFormInput}
+          />
+          <HCaptcha
+            size="invisible"
+            ref={hcaptchaRef}
+            sitekey={process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY!}
+            onVerify={hCaptchaChangeHandler}
+            onClose={hCaptchaCloseHandler}
           />
         </motion.div>
         <button

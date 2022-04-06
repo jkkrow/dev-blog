@@ -1,11 +1,11 @@
 import { useState } from 'react';
 
-export const useApi = <T = any>(callback: () => T) => {
+export const useApi = <T = any>() => {
   const [status, setStatus] = useState<'pending' | 'success' | 'error'>();
   const [data, setData] = useState<T>();
   const [error, setError] = useState<any>(null);
 
-  const api = async () => {
+  const api = async (callback: () => T) => {
     try {
       setStatus('pending');
       setError(null);

@@ -1,16 +1,17 @@
 export const sendContactData =
-  (formData: {
-    email: string;
-    name: string;
-    subject: string;
-    message: string;
+  (params: {
+    form: {
+      email: string;
+      name: string;
+      subject: string;
+      message: string;
+    };
+    token: string;
   }) =>
   async () => {
-    const { email, name, subject, message } = formData;
-
     const response = await fetch('/api/contact', {
       method: 'POST',
-      body: JSON.stringify({ email, name, subject, message }),
+      body: JSON.stringify(params),
       headers: { 'Content-Type': 'application/json' },
     });
 
