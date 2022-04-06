@@ -52,8 +52,6 @@ const ContactForm: React.FC = () => {
       return;
     }
 
-    console.log(formState.inputs);
-
     if (!formState.isValid) {
       return;
     }
