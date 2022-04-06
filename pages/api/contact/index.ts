@@ -5,10 +5,10 @@ import fetch from 'node-fetch';
 
 const ses = new SES({
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+    accessKeyId: process.env.AWS_CONFIG_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.AWS_CONFIG_SECRET_ACCESS_KEY!,
   },
-  region: process.env.AWS_SES_REGION!,
+  region: process.env.AWS_CONFIG_SES_REGION!,
 });
 
 const dto = z.object({
@@ -54,7 +54,7 @@ const handler: NextApiHandler = async (req, res) => {
 
       const params = {
         Destination: {
-          ToAddresses: [process.env.AWS_SES_SOURCE!],
+          ToAddresses: [process.env.AWS_CONFIG_SES_SOURCE!],
         },
         Message: {
           Body: {
@@ -68,7 +68,7 @@ const handler: NextApiHandler = async (req, res) => {
           },
           Subject: { Data: subject },
         },
-        Source: process.env.AWS_SES_SOURCE!,
+        Source: process.env.AWS_CONFIG_SES_SOURCE!,
       };
 
       try {
