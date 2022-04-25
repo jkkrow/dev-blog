@@ -67,11 +67,9 @@ Combining the process of these two method, the final upload workflow looks like 
 
 Before we begin, we need to create a AWS S3 bucket and DynamoDB table. Then we should configure it so we can use it from server.
 
-Let's create S3 bucket first. Go to [AWS S3 console](https://s3.console.aws.amazon.com/s3/home) and click *Create bucket*.
+Let's create S3 bucket first. Go to [AWS S3 console](https://s3.console.aws.amazon.com/s3/home) and click *Create bucket*. Name a bucket to **aws-vod-streaming-source** since this is where we store the source videos and later we'll also create another bucket for converted. Then set the public access like below.
 
-![create-bucket-1](create-bucket-1.png)
-
-![create-bucket-2](create-bucket-2.png)
+![create-bucket](create-bucket.png)
 
 After creating bucket, configure Bucket policy so that it can be accessed from our backend server.
 

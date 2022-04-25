@@ -43,5 +43,14 @@
     "excerpt": "Build a video-on-demand (VOD) streaming service with AWS - allow users to upload video to AWS S3 with multipart upload and presigned url.",
     "date": "2022-04-03",
     "isFeatured": true
+  },
+  {
+    "slug": "aws-vod-streaming-video-convert",
+    "title": "AWS VOD Streaming - Convert Video with AWS Lambda & MediaConvert",
+    "tags": ["AWS", "NodeJS", "Javascript"],
+    "image": "thumbnail.png",
+    "excerpt": "Build a video-on-demand (VOD) streaming app with AWS - convert uploaded video to adaptive media format (CMAF) with AWS Lambda and MediaConvert.",
+    "date": "2022-04-09",
+    "isFeatured": true
   }
 ]
