@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
 import { HeadingProps } from 'react-markdown/lib/ast-to-react';
@@ -18,6 +17,7 @@ import scss from 'react-syntax-highlighter/dist/cjs/languages/prism/scss';
 import json from 'react-syntax-highlighter/dist/cjs/languages/prism/json';
 import bash from 'react-syntax-highlighter/dist/cjs/languages/prism/bash';
 
+import Image from 'components/Image';
 import { AppContext } from 'context/AppContext';
 import classes from './index.module.scss';
 
@@ -104,26 +104,15 @@ const Markdown: React.FC<MarkdownProps> = ({ slug, content }) => {
             const image = node.children[0];
 
             return (
-              <div className={classes.image}>
-                <Image
-                  src={`/images/posts/${slug}/${image.properties.src}`}
-                  alt={image.alt}
-                  layout="fill"
-                />
-              </div>
+              <Image
+                src={`/images/posts/${slug}/${image.properties.src}`}
+                alt={image.alt}
+              />
             );
           },
 
           img: ({ src, alt }) => {
-            return (
-              <div className={classes.image}>
-                <Image
-                  src={`/images/posts/${slug}/${src}`}
-                  alt={alt}
-                  layout="fill"
-                />
-              </div>
-            );
+            return <Image src={`/images/posts/${slug}/${src}`} alt={alt} />;
           },
 
           code: ({ className, inline, children }) => {

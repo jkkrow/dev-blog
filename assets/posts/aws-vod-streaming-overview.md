@@ -35,9 +35,9 @@ A diagram below is the workflow of what we're going to implement:
 * You shoud have an AWS account.
 * This tutorial uses multiple AWS services. You should be awared of that one of the services (MediaConvert) is **NOT FREE**. If you're following the tutorial along, you will be charged for using it.
 
-## Reference
+## Source Code
 
-As a reference, you can find a source code of demo app in [Github](https://github.com/jkkrow/aws-vod-streaming). It contains React frontend and NodeJS backend app.
+As a reference, you can find a source code of demo app in [Github](https://github.com/jkkrow/aws-vod-streaming). It contains React frontend, NodeJS backend app and also Lambda function codes.
 
 Download it and open the project folder in your text editor. Then run following commands inside terminal to start project.
 
@@ -53,5 +53,6 @@ npm run dev
 
 ## Sections
 
-* [Upload Video to AWS S3](/posts/aws-vod-streaming-video-upload)
-* Convert Video with AWS Lambda & MediaConvert
+* [Upload Video to AWS S3](/posts/aws-vod-streaming-upload)
+* [Convert Video with AWS Lambda & MediaConvert](/posts/aws-vod-streaming-convert)
+* [Serve Converted Video with CloudFront](/posts/aws-vod-streaming-deliver)

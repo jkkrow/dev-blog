@@ -3,8 +3,8 @@ title: "AWS VOD Streaming - Upload Video to AWS S3"
 tags: ["AWS", "React", "NodeJS", "Typescript"]
 image: "thumbnail.png"
 excerpt: "Build a video-on-demand (VOD) streaming service with AWS - allow users to upload video to AWS S3 with multipart upload and presigned url."
-date: "2022-04-02"
-isFeatured: true
+date: "2022-04-03"
+isFeatured: false
 ---
 
 In this tutorial, we'll implement the first part of workflow - video upload in AWS S3 and data store in DynamoDB.
@@ -53,7 +53,6 @@ The workflow of video upload with presigned url will be like below:
 
 Another advantage of this method is that we can reduce traffic since video file is uploaded directly to S3 instead of passing through server.
 
-
 ## Implementation
 
 Combining the process of these two method, the final upload workflow looks like this:
@@ -67,11 +66,17 @@ Combining the process of these two method, the final upload workflow looks like 
 
 Before we begin, we need to create a AWS S3 bucket and DynamoDB table. Then we should configure it so we can use it from server.
 
-Let's create S3 bucket first. Go to [AWS S3 console](https://s3.console.aws.amazon.com/s3/home) and click *Create bucket*. Name a bucket to **aws-vod-streaming-source** since this is where we store the source videos and later we'll also create another bucket for converted. Then set the public access like below.
+### S3 Bucket (Source)
+
+This is where we store all the uploaded videos from client. Later we'll also create another bucket for converted videos.
+
+1. Go to AWS S3 console and click **Create bucket**.
+2. Enter a bucket name to something unique (eg. "aws-vod-streaming-source").
+3. Set the public access like below.
 
 ![create-bucket](create-bucket.png)
 
-After creating bucket, configure Bucket policy so that it can be accessed from our backend server.
+After creating bucket, configure Bucket policy so that it allows public access. Go to **Permissions** tab of created bucket and paste following json config to **Bucket policy**. 
 
 ```json:Bucket-Policy.json
 {
@@ -82,11 +87,7 @@ After creating bucket, configure Bucket policy so that it can be accessed from o
       "Effect": "Allow",
       "Principal": "*",
       "Action": [
-        "s3:AbortMultipartUpload",
         "s3:GetObject",
-        "s3:PutObject",
-        "s3:DeleteObject",
-        "s3:ListMultipartUploadParts"
       ],
       "Resource": "arn:aws:s3:::aws-vod-streaming-source/*"
     }
@@ -94,7 +95,9 @@ After creating bucket, configure Bucket policy so that it can be accessed from o
 }
 ```
 
-Also configure the CORS since the file upload is directly from client web.
+We want this behavior to allow users to watch the video contents they uploaded. In the final process, we will deliver converted videos instead of source video. But while the converting job is progressing, source video will be shown to users.
+
+We also need to configure the **CORS** settings to make video contents accessible from client domain. PUT method also need to be allowed since the file upload is directly from client side through presigned url.
 
 ```json:CORS.json
 [
@@ -103,6 +106,7 @@ Also configure the CORS since the file upload is directly from client web.
       "*"
     ],
     "AllowedMethods": [
+      "GET",
       "PUT"
     ],
     "AllowedOrigins": [
@@ -115,27 +119,76 @@ Also configure the CORS since the file upload is directly from client web.
 ]
 ```
 
-Optionally, you can configure a lifecycle rule to delete unfinished multipart uploads. I recommend you to do it as well. Go to Management section of your bucket and create lifecycle rule.
+Optionally, you can configure a lifecycle rule to delete unfinished multipart uploads. I highly recommend you to do this as well since it prevents you from being charged unnecessarily.
 
-![lifecycle-rule-1](lifecycle-rule-1.png)
+1. Go to **Management** section of your bucket and click **Create lifecycle rule**.
+2. Enter Lifecycle rule name (eg. "Delete incomplete multipart upload").
+3. Choose **Limit the scope of this rule using one or more filters** for rule scope.
+4. Enter **videos/** as Prefix.
+5. Check **Delete expired object delete markers or incomplete multipart uploads** for Lifecycle rule actions.
+6. Check both **Delete expired object delete markers** and **Incomplete multipart uploads**
+7. Enter Number of days as you like (eg. 3).
 
-![lifecycle-rule-2](lifecycle-rule-2.png)
+### DynamoDB
 
-Next, create DynamoDB table so that when upload is finished, we can store the video information in the database. Therefore, go to the [DynamoDB console](https://ap-northeast-2.console.aws.amazon.com/dynamodb/home) and create table.
+Next, create DynamoDB table so that when upload is finished, we can store the video information in the database. 
 
-![create-table](create-table.png)
+1. Go to the DynamoDB console and create table.
+2. Enter table name (eg. "aws-vod-streaming").
+3. Type **id** for Partition key.
 
-Finally, we need an AWS credentials for backend server to access created S3 bucket and DynamoDB table. In AWS, to access certain services, we need a credentials of user that has a permissions of those services.
+### IAM User
 
-Go to [IAM console](https://console.aws.amazon.com/iam/home) and add user.
+Once we created both S3 bucket and DynamoDB table, we need an AWS credentials for backend server to access these services. In AWS, to access certain services, we need a credentials of IAM user that has a permissions of those services.
 
-![create-user-1](create-user-1.png)
+1. Go to IAM console and add user.
+2. Enter a User name (eg. "aws-vod-streaming").
+3. Select **Access key - Programmatic access** for AWS credential type.
+4. In **Permissions** tab, select **Attach existing policies directly** and create new policy for S3 bucket and DynamoDB table you've just created.
 
-Add permissions for S3 and DynamoDB. You can create new policy to limit resource and actions, or simply add managed policy that has full controls.
+```json:aws-vod-streaming-s3-source
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "VisualEditor0",
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutObject",
+        "s3:GetObject",
+        "s3:AbortMultipartUpload",
+        "s3:DeleteObject",
+        "s3:ListMultipartUploadParts"
+      ],
+      "Resource": "S3_SOURCE_BUCKET_ARN/*"
+    }
+  ]
+}
+```
 
-![create-user-2](create-user-2.png)
+```json:aws-vod-streaming-dynamodb
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "VisualEditor0",
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:PutItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:UpdateItem"
+      ],
+      "Resource": "DYNAMODB_TABLE_ARN"
+    }
+  ]
+}
+```
 
-Once you created user, copy Access key ID and Secret access key which we'll use in our server. Don't paste this key to your source code since it'll be exposed to your remote repository such as Github. I recommend you to store this is .env file.
+** Replace resource to your arn of S3 bucket and DynamoDB table.
+
+Once you created user, copy Access key ID and Secret access key which we'll use in our server. Don't paste this key to your source code since it'll be exposed to your remote repository like Github. Best practice is to store this in `.env` file and use as environment variable.
 
 ## Client (React)
 
@@ -413,6 +466,8 @@ export const createVideoHandler: RequestHandler = async (req, res) => {
 };
 ```
 
+We'll store all the videos in `videos/` prefix. In AWS S3, you can simulate folder structure by splitting path with `/`.
+
 ```ts:upload.service.ts
 import { s3 } from '../config/aws';
 
@@ -492,8 +547,31 @@ export const createVideo = async (video: Video) => {
 };
 ```
 
+The reason we don't store entire domain in url is that, there might be a circumstance that needs a migration to different storage solution in the future.
+
+## Testing
+
+After testing with all these codes, you can find a video file uploaded to your S3 bucket successfully as well as an item created in DynamoDB.
+
+<figure>
+  <img src="testing-client.png" alt="testing-client">
+  <figcaption>Uploading from Demo App</figcaption>
+</figure>
+
+<figure>
+  <img src="testing-bucket.png" alt="testing-bucket">
+  <figcaption>S3 source bucket</figcaption>
+</figure>
+
+<figure>
+  <img src="testing-table.png" alt="testing-table">
+  <figcaption>DynamoDB table</figcaption>
+</figure>
+
 ## Conclusion
 
-That was the first part of building VOD streaming service. We've handled video upload with combination of multipart upload and presigned url. You can find the source code of this tutorial in [here](https://github.com/jkkrow/aws-vod-streaming).
+That was the first part of building VOD streaming service. We've handled video upload with combination of multipart upload and presigned url.
 
-In the next section, we'll transcode uploaded video into adaptive media format. We can automate this process using other AWS services such as Lambda and MediaConvert.
+[In the next section](/posts/aws-vod-streaming-convert), we'll transcode uploaded video into adaptive media format. We can automate this process using other AWS services such as Lambda and MediaConvert.
+
+You can find the source code of this tutorial in [here](https://github.com/jkkrow/aws-vod-streaming).

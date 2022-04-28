@@ -1,7 +1,6 @@
-import Image from 'next/image';
-
 import PostDate from 'components/Post/UI/Date';
 import Tags from 'components/Post/UI/Tags';
+import Image from 'components/Image';
 import classes from './index.module.scss';
 
 interface PostHeaderProps {
@@ -19,9 +18,7 @@ const PostHeader: React.FC<PostHeaderProps> = ({
 }) => {
   return (
     <header className={classes.header}>
-      <div className={classes.image}>
-        <Image src={image} alt={title} layout="fill" />
-      </div>
+      <Image src={image} alt={title} />
       <div className={classes.info}>
         <div className={classes.tags}>
           <Tags tags={tags} />

@@ -1,9 +1,9 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import { motion } from 'framer-motion';
 
 import PostDate from '../UI/Date';
 import Tags from '../UI/Tags';
+import Image from 'components/Image';
 import { Post } from 'types/post';
 import classes from './index.module.scss';
 
@@ -33,9 +33,7 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
     >
       <Link href={linkPath}>
         <a>
-          <div className={classes.image}>
-            <Image src={imagePath} alt={post.title} layout="fill" />
-          </div>
+          <Image src={imagePath} alt={post.title} />
         </a>
       </Link>
       <div className={classes.content}>
