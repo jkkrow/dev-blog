@@ -1,8 +1,8 @@
 ---
-title: 'AWS VOD Streaming - Serve Video with AWS CloudFront'
+title: 'AWS VOD Streaming - Deliver Video with AWS CloudFront'
 tags: ['AWS', 'React', 'NodeJS', 'Typescript']
 image: 'thumbnail.png'
-excerpt: 'Build a video-on-demand (VOD) streaming app with AWS - convert uploaded video to adaptive media format (CMAF) with AWS Lambda and MediaConvert.'
+excerpt: 'Build a video-on-demand (VOD) streaming app with AWS - deliver converted video with CloudFront distribution.'
 date: '2022-04-16'
 isFeatured: false
 ---
@@ -132,4 +132,6 @@ The source video also works properly.
 
 ## Conclusion
 
-You can find the source code of this tutorial in [here](https://github.com/jkkrow/aws-vod-streaming).
+That's all for building VOD streaming app using AWS services. I hope this series of tutorial was helpful. You can also improve this app by implementing additional features - such as Authentication.
+
+Review the source code of this tutorial in [Github](https://github.com/jkkrow/aws-vod-streaming).
