@@ -1,0 +1,25 @@
+.hash {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  text-decoration: none !important;
+
+  &::after {
+    content: '#';
+    margin-left: 1rem;
+    opacity: 0;
+    transition: opacity 200ms ease-out;
+  }
+
+  @media (hover: hover) {
+    &:hover::after {
+      opacity: 1;
+    }
+  }
+
+  @media (hover: none) {
+    &:active::after {
+      opacity: 1;
+    }
+  }
+}

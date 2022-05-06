@@ -23,11 +23,12 @@ const Tags: React.FC<TagsProps> = ({ tags }) => {
 
   const addTagHandler = (tag: string) => {
     return () => {
-      const newTags = queryTags ? [...queryTags, tag] : [tag];
+      const tags = queryTags ? [...queryTags] : [];
+      tags.indexOf(tag) === -1 && tags.push(tag);
 
       router.push({
         pathname: '/posts',
-        query: { tags: newTags },
+        query: { tags },
       });
     };
   };

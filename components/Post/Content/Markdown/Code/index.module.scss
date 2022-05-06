@@ -1,0 +1,43 @@
+.container {
+  position: relative;
+}
+
+.label {
+  width: max-content;
+  padding: 1rem 2rem !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  font-size: 1.5rem !important;
+  border-bottom: 1px solid var(--text-theme-secondary);
+}
+
+.inline {
+  padding: 0.3rem 0.7rem;
+  font-family: Inconsolata, Monaco, Consolas, 'Courier New', Courier, monospace;
+  font-size: 1.5rem;
+  color: var(--text-theme-primary);
+  background-color: var(--text-theme-secondary);
+}
+
+.copy {
+  position: absolute;
+  display: flex;
+  right: 2rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease-out;
+  background-color: transparent;
+
+  svg {
+    margin: 0;
+  }
+
+  @media (hover: none) {
+    opacity: 1;
+  }
+}
+
+.container:hover .copy {
+  opacity: 1;
+  pointer-events: initial;
+}
