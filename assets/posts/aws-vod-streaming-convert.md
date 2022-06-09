@@ -39,20 +39,22 @@ MediaConvert needs permissions to read and write files from S3 bucket and genere
 3. Click **next** button. It will automatically attach **AmazonS3FullAccess** and **AmazonAPIGatewayInvokeFullAccess** policies.
 4. Enter a role name (eg. "VOD-MediaConvertRole") and click  **Create role**.
 
-### Lambda Role
+### Create Lambda function (Job Submit)
 
-With the MediaConvert role we've just created, we'll create another role for Lambda function itself.
+1. Go to AWS Lambda console and create function. 
+2. Choose **Node.js** environment for Runtime.
+3. In **Permissions** tab, choose default setting which creates a new execution role for Lambda function. 
 
-1. In IAM console, create another role.
-2. Select **AWS service** for trusted entity type and check **Lambda** for use case the click **next** button.
-3. In permissions tab, find for **AWSLambdaBasicExecutionRole** and add it.
-4. Enter a role name (eg. "aws-vod-streaming") and click **Create role**.
-5. After created role, go to detail page of created role.
-6. In **Permissions** tab, **click Add permissions** and **Create inline policy**.
- attach additional inline policies for MediaConvert permission.
-7. In **JSON** tab, copy/paste following config:
+### Update Execution Role (Job Submit)
 
-```json:aws-vod-streaming-convert
+After you create function, you need to update the Lambda execution role to run other AWS services in your function. With the MediaConvert role we've just created, we'll create another role for Lambda function itself.
+
+1. In Lambda console of your function, go to **Configuration** tab and choose **Permissions**.
+2. You can see a default execution role which is created automatically. Click a role name to redirect to IAM console to update the role. 
+3. There is a `AWSLambdaBasicExecutionRole` policy as a default. Click **Add permissions** button and choose **Create inline policy**.
+4. In **JSON** tab, copy/paste following config:
+
+```json
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -100,13 +102,9 @@ With the MediaConvert role we've just created, we'll create another role for Lam
 }
 ```
 
-** Replace the **MEDIACONVERT_ROLE_ARN** to the arn of MediaConvert role we've just created. With that, we've finished preparing for our first Lambda function.
+Replace the **MEDIACONVERT_ROLE_ARN** to the arn of MediaConvert role we've just created. This would allow you to create a MediaConvert job in your Lambda function.
 
-### Create Lambda function (Job Submit)
-
-1. Go to AWS Lambda console and create function. 
-2. Choose **Node.js** environment for Runtime.
-3. In **Permissions** tab, choose **Use an existing role** and select the Lambda role we've just created.
+### Update Code (Job Submit)
 
 After created function, it's time to write some code. You can also find it in [Github](https://github.com/jkkrow/aws-vod-streaming/tree/main/Lambda/convert). Upload it as zip file, or just copy/paste directly in Lambda console.
 
@@ -251,36 +249,47 @@ You can find job configuration files in [here](https://github.com/jkkrow/aws-vod
 
 Optionally, you can create your own job template file from MediaConvert console. You can also extract these configuration files and store in S3 bucket, then read them with aws-sdk built in Lambda.
 
-### Configure Lambda function
+After updating code, add environment variables. We'll use environment variables for converted bucket, MediaConvert endpoint and MediaConvert role which we created earlier. You can find your MediaConvert endpoint in **Account** menu of MediaConvert console.
+
+![lambda-convert-env](lambda-convert-env.png)
+
+### Add Trigger (Job Submit)
 
 Now we have final step of creating first Lambda function. We need to add trigger to run Lambda. We want to run this function whenever the upload is finished.
 
 1. Click **Add trigger** in the Lambda console.
-2. Find S3 as trigger and select **source** bucket.
-3. Choose **Multipart upload completed** for Event type
+2. Find **S3** as a trigger and select **source** bucket.
+3. Choose **Multipart upload completed** as an Event type.
 4. Enter **videos/** for Prefix.
 
 ![lambda-convert-trigger](lambda-convert-trigger.png)
 
-Finally, add environment variables. We'll use environment variables for converted bucket, MediaConvert endpoint and MediaConvert role which we created earlier. You can find your MediaConvert endpoint in **Account** menu of MediaConvert console.
-
-![lambda-convert-env](lambda-convert-env.png)
-
 ## Part 2 - Handle Job Complete Event
 
-With all those setups, the video converting workflow would work properly. Whenever the video is uploaded, Lambda function is triggered to submit job to MediaConvert. Then converted video and generated thumbnail will be stored in converted bucket.
+By far, we've implemented converting process. Whenever the video is uploaded, Lambda function is triggered to submit job to MediaConvert. Then converted video and generated thumbnail will be stored in converted bucket.
 
 However, the data we stored in DynamoDB is not reflecting the correct url. Currently it points to mp4 file. Thanks to this setup, user can still access video content with source url while convert job is progressing. But after convert job is finished, we want url to points to converted file.
 
 We can achieve this by creating another Lambda function. But this time, the trigger event will be EventBridge.
 
-### Create Another Lambda Role and Function
+### Create Lambda Function (Job Complete)
 
-Go to Lambda console and create another function. To make it simple, let's use Lambda role that we created earlier. But we need attach extra permission to this role. Because this time, we need to access DynamoDB instead of MediaConvert.
+Go to Lambda console and create another function. We simply are going to take a same steps as we did before.
 
-Go to IAM console and add inline policy to Lambda role.
+1. Go to AWS Lambda console and create function. 
+2. Choose **Node.js** environment for Runtime.
+3. In **Permissions** tab, choose default setting which creates a new execution role for Lambda function. 
 
-```json:aws-vod-streaming-complete
+### Update Execution Role (Job Complete)
+
+This time, we need to access DynamoDB instead of MediaConvert.
+
+1. In Lambda console of your function, go to **Configuration** tab and choose **Permissions**.
+2. You can see a default execution role which is created automatically. Click a role name to redirect to IAM console to update the role. 
+3. There is a `AWSLambdaBasicExecutionRole` policy as a default. Click **Add permissions** button and choose **Create inline policy**.
+4. In **JSON** tab, copy/paste following config:
+
+```json
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -294,11 +303,13 @@ Go to IAM console and add inline policy to Lambda role.
 }
 ```
 
-** Replace **DYNAMODB_TABLE_ARN** to your DynamoDB Table arn.
+Replace **DYNAMODB_TABLE_ARN** to your DynamoDB Table arn.
 
-### Create EventBridge Rule
+### Add Trigger (Job Complete)
 
-Go to Eventbridge console and create new rule. You can configure the AWS events and targets.
+This Lambda function will be triggered when the MediaConvert job is completed. To listen to complete event of MediaConvert, we can leverage EventBridge service. EventBridge allows us to run automated job based on various AWS event patterns as well as schedule expression.
+
+Go to Eventbridge console and create a new rule. You can configure event and target.
 
 1. Enter rule name (eg. VOD-ConvertCompleted).
 2. Select **Rule with an event pattern** for Rule type and click **Next**.
@@ -311,7 +322,7 @@ Go to Eventbridge console and create new rule. You can configure the AWS events 
 
 After created event rule, you can find it automatically attached as a trigger in Lambda console.
 
-### Update DynamoDB Item
+### Update Code (Job Complete)
 
 The code of this Lambda function is quite simple. When we converted video, we saved `id` and `key` field in metadata. We can retrieve this metadata from `event` object. With that, you can update item with converted file extension.
 
@@ -357,6 +368,8 @@ The data stored in DynamoDB also updated successfully.
 ## Conclusion
 
 That's all for converting video automatically using AWS Lambda and other services. Now we have more modern way of streaming video with multiple resolutions rather than just serving source video.
+
+Also, the whole process of converting will be executed as an asynchronous invocation (S3 Notification, Eventbridge), which means these processes will not block the workflow of our application.
 
 [In the next section](/posts/aws-vod-streaming-deliver), which is a final step, we'll deliver the converted video to client using CloudFront distribution.
 
