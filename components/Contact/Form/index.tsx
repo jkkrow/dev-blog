@@ -80,6 +80,7 @@ const ContactForm: React.FC = () => {
     if (status !== 'pending') return;
 
     setTransitionFinished(false);
+    setTransitionSuspended(true);
     finishedTimer.current && clearTimeout(finishedTimer.current);
     finishedTimer.current = setTimeout(() => {
       setTransitionFinished(true);
@@ -89,7 +90,6 @@ const ContactForm: React.FC = () => {
   useEffect(() => {
     if (status !== 'success') return;
 
-    setTransitionSuspended(true);
     suspendedTiemr.current && clearTimeout(suspendedTiemr.current);
     suspendedTiemr.current = setTimeout(() => {
       setTransitionSuspended(false);
@@ -97,6 +97,12 @@ const ContactForm: React.FC = () => {
 
     setFormData({ email: '', name: '', subject: '', message: '' });
   }, [status, setFormData]);
+
+  useEffect(() => {
+    if (status !== 'error') return;
+
+    setTransitionSuspended(false);
+  }, [status]);
 
   useEffect(() => {
     return () => {
