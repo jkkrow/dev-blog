@@ -13,8 +13,8 @@ const Hero: React.FC = () => {
     >
       <h1>Dev Blog</h1>
       <p>
-        Fullstack Web Development Blog including React, Node, Express, MongoDB
-        and AWS services.
+        A Full Stack Web Development Blog including React, Node, Express,
+        MongoDB and AWS services.
       </p>
     </motion.section>
   );

@@ -5,11 +5,17 @@ export const useApi = <T = any>() => {
   const [data, setData] = useState<T>();
   const [error, setError] = useState<any>(null);
 
-  const api = async (callback: () => T) => {
+  const api = async (url: string, config: RequestInit) => {
     try {
       setStatus('pending');
       setError(null);
-      const data = await callback();
+      const response = await fetch(url, config);
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Something went wrong!');
+      }
 
       setStatus('success');
       setData(data);

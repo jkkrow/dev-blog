@@ -2,6 +2,22 @@
   position: relative;
 }
 
+.goBack {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 2rem;
+  z-index: 1;
+
+  svg {
+    width: 4rem;
+    height: 4rem;
+    color: var(--text-900);
+    cursor: pointer;
+    transform: rotate(-90deg);
+  }
+}
+
 .info {
   position: absolute;
   display: flex;

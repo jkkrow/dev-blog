@@ -7,9 +7,9 @@ const Anchor = ({ children, href }: any) => {
 
   if (isHashLink) {
     return (
-      <a className={classes.hash} href={href}>
-        {children}
-      </a>
+      <Link href={href} replace>
+        <a className={classes.hash}>{children}</a>
+      </Link>
     );
   }
 

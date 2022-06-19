@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 
-import Theme from 'components/Layout/Theme';
+import Theme from 'components/Theme';
 import ArrowTop from 'public/icons/arrow-top.svg';
 import { AppContext } from 'context/AppContext';
 import classes from './index.module.scss';

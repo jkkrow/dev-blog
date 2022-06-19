@@ -6,12 +6,10 @@ import classes from './index.module.scss';
 interface State {
   value: string;
   isValid: boolean;
-  isBlured: boolean;
 }
 
 type Action =
   | { type: 'CHANGE'; value: string; validators: ValidatorAction[] }
-  | { type: 'BLUR' }
   | { type: 'INITIAL' };
 
 const inputReducer = (state: State, action: Action): State => {
@@ -23,17 +21,10 @@ const inputReducer = (state: State, action: Action): State => {
         isValid: validate(action.value, action.validators),
       };
 
-    case 'BLUR':
-      return {
-        ...state,
-        isBlured: true,
-      };
-
     case 'INITIAL': {
       return {
         value: '',
         isValid: false,
-        isBlured: false,
       };
     }
 
@@ -47,7 +38,8 @@ interface InputProps {
   type?: string;
   textarea?: boolean;
   validators: ValidatorAction[];
-  submitted: boolean;
+  isValidated: boolean;
+  isSubmitted: boolean;
   onForm: (id: string, value: string, isValid: boolean) => void;
 }
 
@@ -56,13 +48,13 @@ const Input: React.FC<InputProps> = ({
   type = 'text',
   textarea,
   validators,
-  submitted,
+  isValidated,
+  isSubmitted,
   onForm,
 }) => {
   const [inputState, dispatch] = useReducer(inputReducer, {
     value: '',
     isValid: false,
-    isBlured: false,
   });
 
   const inputRef = useRef<any>(null);
@@ -72,10 +64,10 @@ const Input: React.FC<InputProps> = ({
   }, [onForm, id, inputState]);
 
   useEffect(() => {
-    if (!submitted) return;
+    if (!isSubmitted) return;
     inputRef.current && inputRef.current.blur();
     dispatch({ type: 'INITIAL' });
-  }, [submitted]);
+  }, [isSubmitted]);
 
   const changeHandler = (
     event:
@@ -89,16 +81,12 @@ const Input: React.FC<InputProps> = ({
     });
   };
 
-  const blurHandler = () => {
-    dispatch({ type: 'BLUR' });
-  };
-
   const inputClasses = useMemo(
     () =>
-      !inputState.isValid && inputState.isBlured
+      !inputState.isValid && isValidated
         ? [classes.input, classes.invalid].join(' ')
         : classes.input,
-    [inputState]
+    [inputState, isValidated]
   );
 
   const element = !textarea ? (
@@ -109,7 +97,6 @@ const Input: React.FC<InputProps> = ({
       autoComplete="off"
       value={inputState.value}
       onChange={changeHandler}
-      onBlur={blurHandler}
     />
   ) : (
     <textarea
@@ -118,7 +105,6 @@ const Input: React.FC<InputProps> = ({
       rows={5}
       value={inputState.value}
       onChange={changeHandler}
-      onBlur={blurHandler}
     />
   );
 

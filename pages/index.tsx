@@ -2,7 +2,7 @@ import Head from 'next/head';
 import type { GetStaticProps, InferGetStaticPropsType } from 'next';
 import { Fragment } from 'react';
 
-import Hero from 'components/Home/Hero';
+import Hero from 'components/Hero';
 import PostGrid from 'components/Post/Grid';
 import { Post } from 'types/post';
 import { getFeaturedPosts } from 'lib/posts';

@@ -1,6 +1,9 @@
+import { useRouter } from 'next/router';
+
 import PostDate from 'components/Post/UI/Date';
 import Tags from 'components/Post/UI/Tags';
 import Image from 'components/Image';
+import ArrowTop from 'public/icons/arrow-top.svg';
 import classes from './index.module.scss';
 
 interface PostHeaderProps {
@@ -16,9 +19,19 @@ const PostHeader: React.FC<PostHeaderProps> = ({
   image,
   date,
 }) => {
+  const router = useRouter();
+
+  const goBackHandler = () => {
+    console.log(router);
+    router.back();
+  };
+
   return (
     <header className={classes.header}>
       <Image src={image} alt={title} />
+      <div className={classes.goBack} onClick={goBackHandler}>
+        <ArrowTop />
+      </div>
       <div className={classes.info}>
         <div className={classes.tags}>
           <Tags tags={tags} />

@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import { useContext } from 'react';
 
-import Logo from '../Logo';
-import Theme from '../Theme';
+import Logo from '../../Logo';
+import Theme from '../../Theme';
 import { AppContext } from 'context/AppContext';
 import classes from './index.module.scss';
 

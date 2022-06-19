@@ -1,15 +1,38 @@
 .content {
-  width: 90%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  margin: 4rem;
+  gap: 4rem;
+}
+
+.main {
   max-width: 90rem;
-  margin: 4rem auto;
   overflow: hidden;
   font-size: 1.8rem;
   color: var(--text-theme-primary);
   background-color: var(--bg-theme-secondary);
-  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
 
-  @media (max-width: 700px) {
-    width: 100%;
-    margin: auto;
+.aside {
+  position: sticky;
+  top: 4rem;
+  height: max-content;
+  max-width: 50rem;
+  max-height: 70vh;
+  overflow: auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 700px) {
+  .content {
+    margin: 0;
+  }
+}
+
+@media (max-width: 1300px) {
+  .aside {
+    display: none;
   }
 }

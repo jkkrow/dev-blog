@@ -2,10 +2,9 @@ import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import HCaptcha from '@hcaptcha/react-hcaptcha';
 
-import Input from '../Input';
+import Input from 'components/Input';
 import { useForm } from 'hooks/form';
 import { useApi } from 'hooks/api';
-import { sendContactData } from 'lib/contact';
 import { VALIDATOR_EMAIL, VALIDATOR_REQUIRE } from 'lib/validators';
 import classes from './index.module.scss';
 
@@ -32,6 +31,7 @@ const ContactForm: React.FC = () => {
 
   const { status, error, api } = useApi();
 
+  const [isValidated, setIsValidated] = useState(false);
   const [transitionFinished, setTransitionFinished] = useState(true);
   const [transitionSuspended, setTransitionSuspended] = useState(false);
 
@@ -42,6 +42,7 @@ const ContactForm: React.FC = () => {
 
   const sendEmailHandler = async (event: React.FormEvent) => {
     event.preventDefault();
+    setIsValidated(false);
 
     if (isSuccess) {
       setTransitionSuspended(false);
@@ -49,6 +50,7 @@ const ContactForm: React.FC = () => {
     }
 
     if (!formState.isValid) {
+      setIsValidated(true);
       return;
     }
 
@@ -59,8 +61,10 @@ const ContactForm: React.FC = () => {
   const hCaptchaChangeHandler = async (token: string | null) => {
     if (!token) return;
 
-    await api(
-      sendContactData({
+    await api('/api/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
         form: {
           email: formState.inputs.email.value,
           name: formState.inputs.name.value,
@@ -68,11 +72,16 @@ const ContactForm: React.FC = () => {
           message: formState.inputs.message.value,
         },
         token,
-      })
-    );
+      }),
+    });
   };
 
   const hCaptchaCloseHandler = () => {
+    setTransitionFinished(true);
+  };
+
+  const hCaptchaErrorHandler = () => {
+    console.log('error');
     setTransitionFinished(true);
   };
 
@@ -165,26 +174,30 @@ const ContactForm: React.FC = () => {
             id="email"
             type="email"
             validators={[VALIDATOR_EMAIL()]}
-            submitted={isSuccess}
+            isValidated={isValidated}
+            isSubmitted={isSuccess}
             onForm={setFormInput}
           />
           <Input
             id="name"
             validators={[VALIDATOR_REQUIRE()]}
-            submitted={isSuccess}
+            isValidated={isValidated}
+            isSubmitted={isSuccess}
             onForm={setFormInput}
           />
           <Input
             id="subject"
             validators={[VALIDATOR_REQUIRE()]}
-            submitted={isSuccess}
+            isValidated={isValidated}
+            isSubmitted={isSuccess}
             onForm={setFormInput}
           />
           <Input
             id="message"
             textarea
             validators={[VALIDATOR_REQUIRE()]}
-            submitted={isSuccess}
+            isValidated={isValidated}
+            isSubmitted={isSuccess}
             onForm={setFormInput}
           />
           <HCaptcha
@@ -192,13 +205,11 @@ const ContactForm: React.FC = () => {
             ref={hcaptchaRef}
             sitekey={process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY!}
             onVerify={hCaptchaChangeHandler}
+            onError={hCaptchaErrorHandler}
             onClose={hCaptchaCloseHandler}
           />
         </motion.div>
-        <button
-          className={buttonClasses}
-          disabled={isPending || (!formState.isValid && !isSuccess)}
-        >
+        <button className={buttonClasses} disabled={isPending}>
           {buttonMessage}
         </button>
       </form>

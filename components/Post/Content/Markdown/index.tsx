@@ -19,9 +19,9 @@ const Markdown: React.FC<MarkdownProps> = ({ slug, content }) => {
       <ReactMarkdown
         rehypePlugins={[rehypeRaw]}
         components={{
-          h1: Heading(1),
-          h2: Heading(2),
-          h3: Heading(3),
+          h1: Heading,
+          h2: Heading,
+          h3: Heading,
           a: Anchor,
           p: Paragraph(slug),
           img: Img(slug),
