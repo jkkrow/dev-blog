@@ -1,14 +1,14 @@
 .contact {
-  width: 90%;
   max-width: 90rem;
-  padding: 3rem;
-  margin: 4rem auto;
-  background-color: var(--bg-theme-primary);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  padding: 4rem;
+  margin: auto;
 }
 
 .form {
+  padding: 3rem;
   font-size: 1.8rem;
+  background-color: var(--bg-theme-primary);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .group {
