@@ -89,7 +89,8 @@ svg {
   width: 2.5rem;
   height: 2.5rem;
   color: var(--text-theme-primary);
-  fill: none;
+  overflow: visible;
+  fill: currentColor;
   stroke: currentColor;
 }
 
@@ -142,4 +143,14 @@ img {
   &-thumb:active {
     background-color: var(--bg-700);
   }
+}
+
+::selection {
+  color: var(--bg-theme-primary);
+  background-color: var(--text-theme-primary);
+}
+
+::-moz-selection {
+  color: var(--bg-theme-primary);
+  background-color: var(--text-theme-primary);
 }

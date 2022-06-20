@@ -1,2 +1,6 @@
+@import '../Header/index.module.scss';
+@import '../Footer/index.module.scss';
+
 .main {
+  min-height: calc(100vh - $header-height - $footer-height);
 }
