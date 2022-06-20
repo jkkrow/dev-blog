@@ -22,7 +22,6 @@ const PostHeader: React.FC<PostHeaderProps> = ({
   const router = useRouter();
 
   const goBackHandler = () => {
-    console.log(router);
     router.back();
   };
 

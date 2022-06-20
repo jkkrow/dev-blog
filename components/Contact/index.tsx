@@ -81,7 +81,6 @@ const ContactForm: React.FC = () => {
   };
 
   const hCaptchaErrorHandler = () => {
-    console.log('error');
     setTransitionFinished(true);
   };
 
