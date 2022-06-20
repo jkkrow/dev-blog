@@ -1,0 +1,18 @@
+$footer-height: 10rem;
+
+.footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: $footer-height;
+  gap: 2rem;
+
+  svg {
+    overflow: visible;
+  }
+}
+
+.social {
+  display: flex;
+  gap: 1.5rem;
+}
