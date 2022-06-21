@@ -17,7 +17,7 @@ const HomePage = ({
   return (
     <Fragment>
       <Head>
-        <title>Blog</title>
+        <title>Dev Blog</title>
         <meta name="description" content="Fullstack web development blog" />
       </Head>
       <Hero />
