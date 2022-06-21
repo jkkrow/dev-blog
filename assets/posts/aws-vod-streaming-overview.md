@@ -53,6 +53,6 @@ npm run dev
 
 ## Sections
 
-* [Upload Video to AWS S3](/posts/aws-vod-streaming-upload)
-* [Convert Video with AWS Lambda & MediaConvert](/posts/aws-vod-streaming-convert)
-* [Serve Converted Video with CloudFront](/posts/aws-vod-streaming-deliver)
+* [Upload video to AWS S3](/posts/aws-vod-streaming-upload)
+* [Convert video with AWS Lambda & MediaConvert](/posts/aws-vod-streaming-convert)
+* [Deliver converted video with CloudFront](/posts/aws-vod-streaming-deliver)

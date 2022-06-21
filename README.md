@@ -2,8 +2,6 @@
 
 A Full Stack Web Development Blog built with NextJS.
 
-## Description
-
 This blog contains a number of posts about various topics such as React, Node, Express, MongoDB and AWS services. Most of them are covering technologies that I've done in my other projects.
 
 You can see a live website [here](https://blog.junkukim.com).
@@ -18,7 +16,6 @@ You must have Node.js and npm installed on your machine. This project was built 
 ## Setup
 
 - Clone the repository.
-
 - Run following commands in project directory to start.
 
 ```bash
