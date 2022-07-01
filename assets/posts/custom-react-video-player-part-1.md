@@ -109,9 +109,9 @@ The container should have `relative` position so that controls can be placed bas
 
 `clamp()` is very helpful when making a responsive element. it takes minimum, preferred, maximum value as parameter. In above code, our font size will be minimum 1.2rem size, increased along with 2vw, up to 2rem. Same thing happens with controls height. Thanks to `clamp()`, there will be no `@media` query when making our player.
 
-*** *We will use this `vw` unit quite often in this tutorial. A Caveat is that `vw` unit is based on viewport width, which means CSS property based on `vw` unit will change depends on viewport size, not on video player itself. I'm assuming that this video player is used as a full size element(at least full width). If your use case is other than this, consider using % units or fixed value.(font size can only be responsive with viewport unit though)*
+> We will use this `vw` unit quite often in this tutorial. A Caveat is that `vw` unit is based on viewport width, which means CSS property based on `vw` unit will change depends on viewport size, not on video player itself. I'm assuming that this video player is used as a full size element(at least full width). If your use case is other than this, consider using % units or fixed value.(font size can only be responsive with viewport unit though)
 
-*** *Also, since I don't want to bore you by explaining every CSS, which would also make the post really long, I will only explain important ones. You can find full CSS in both [starter files](https://github.com/jkkrow/custom-react-video-player-starter-files) and [finished code](https://github.com/jkkrow/custom-react-video-player-layout).*
+> Also, since I don't want to bore you by explaining every CSS, which would also make the post really long, I will only explain important ones. You can find full CSS in both [starter files](https://github.com/jkkrow/custom-react-video-player-starter-files) and [finished code](https://github.com/jkkrow/custom-react-video-player-layout).
 
 ## Time
 
