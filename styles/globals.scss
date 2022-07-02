@@ -148,6 +148,7 @@ img {
 ::selection {
   color: var(--bg-theme-primary);
   background-color: var(--text-theme-primary);
+  text-shadow: none;
 }
 
 ::-moz-selection {

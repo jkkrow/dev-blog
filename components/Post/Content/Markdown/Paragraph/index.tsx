@@ -7,12 +7,20 @@ const Paragraph = (slug: string) => {
     }
 
     const image = node.children[0];
+    const { src, alt } = image.properties;
+    const imagePath = `/images/posts/${slug}/${src}`;
+    const parsedAlt = alt.split('?caption=');
 
-    return (
-      <Image
-        src={`/images/posts/${slug}/${image.properties.src}`}
-        alt={image.alt}
-      />
+    const altText = parsedAlt[0];
+    const isCaption = parsedAlt[1] === 'true';
+
+    return isCaption ? (
+      <figure>
+        <Image src={imagePath} alt={altText} />
+        <figcaption>{parsedAlt[0]}</figcaption>
+      </figure>
+    ) : (
+      <Image src={imagePath} alt={altText} />
     );
   };
 

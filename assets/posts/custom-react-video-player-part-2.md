@@ -986,10 +986,7 @@ const hideLoaderHandler = () => {
 
 However, this isn't enough for realistic user experience. If you playing around with progress bar, jumping to position where the buffer is downloaded, you can see `waiting` event fired instantly even though it is playable without further buffering.
 
-<figure>
-  <img src="instant-loading.gif" alt="Loading shows unnecessarily">
-  <figcaption>Loading shows unnecessarily</figcaption>
-</figure>
+![Loading shows unnecessarily?caption=true](instant-loading.gif)
 
 So we need to wait some amount of moment before showing loader, to check if it is actually needed to be shown. We can achieve this with `setTimeout` function. Therefore, let's use our `useTimeout` hook again!
 

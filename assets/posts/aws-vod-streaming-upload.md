@@ -9,10 +9,7 @@ isFeatured: false
 
 In this tutorial, we'll implement the first part of workflow - video upload in AWS S3 and data store in DynamoDB.
 
-<figure>
-  <img src="overview.png" alt="overview">
-  <figcaption>Workflow of VOD streaming</figcaption>
-</figure>
+![Workflow of VOD streaming?caption=true](overview.png)
 
 What we're going to achieve is allowing users of our app to upload video into our S3 bucket, so that it can be shared to users. You can think of this as streaming services like Youtube or Vimeo.
 
@@ -553,20 +550,11 @@ The reason we don't store entire domain in url is that, there might be a circums
 
 After testing with all these codes, you can find a video file uploaded to your S3 bucket successfully as well as an item created in DynamoDB.
 
-<figure>
-  <img src="testing-client.png" alt="testing-client">
-  <figcaption>Uploading from Demo App</figcaption>
-</figure>
+![Uploading from demo app?caption=true](testing-client.png)
 
-<figure>
-  <img src="testing-bucket.png" alt="testing-bucket">
-  <figcaption>S3 source bucket</figcaption>
-</figure>
+![S3 source bucket?caption=true](testing-bucket.png)
 
-<figure>
-  <img src="testing-table.png" alt="testing-table">
-  <figcaption>DynamoDB table</figcaption>
-</figure>
+![DynamoDB table?caption=true](testing-table.png)
 
 ## Conclusion
 
