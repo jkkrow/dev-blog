@@ -1,6 +1,6 @@
 ---
 title: "AWS VOD Streaming - Overview"
-tags: ["AWS"]
+tags: ["AWS", "React", "NodeJS", "Typescript", "Javascript"]
 image: "thumbnail.png"
 excerpt: "Build a video-on-demand (VOD) streaming service with multiple AWS services - AWS S3, DynamoDB, Lambda, MediaConvert and etc."
 date: "2022-04-02"
