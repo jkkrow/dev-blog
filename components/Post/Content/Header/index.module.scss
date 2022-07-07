@@ -1,5 +1,11 @@
 .header {
   position: relative;
+
+  @supports not (backdrop-filter: blur()) {
+    img {
+      filter: blur(10px);
+    }
+  }
 }
 
 .goBack {
@@ -34,10 +40,6 @@
   color: var(--text-900);
   background-color: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(10px);
-
-  @supports not (backdrop-filter: blur()) {
-    background-color: rgba(0, 0, 0, 0.8);
-  }
 
   h1 {
     font-size: clamp(2rem, 4vw, 4rem);

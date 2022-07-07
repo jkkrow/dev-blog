@@ -1,5 +1,5 @@
-import Github from 'public/icons/github.svg';
-import Linkedin from 'public/icons/linkedin.svg';
+import Github from 'components/Icons/Github';
+import Linkedin from 'components/Icons/Linkedin';
 import classes from './index.module.scss';
 
 const Footer: React.FC = () => {

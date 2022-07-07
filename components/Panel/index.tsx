@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 
 import Theme from 'components/Theme';
-import ArrowTop from 'public/icons/arrow-top.svg';
+import ArrowTop from 'components/Icons/ArrowTop';
 import { AppContext } from 'context/AppContext';
 import classes from './index.module.scss';
 

@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import PostDate from 'components/Post/UI/Date';
 import Tags from 'components/Post/UI/Tags';
 import Image from 'components/Image';
-import ArrowTop from 'public/icons/arrow-top.svg';
+import ArrowTop from 'components/Icons/ArrowTop';
 import classes from './index.module.scss';
 
 interface PostHeaderProps {

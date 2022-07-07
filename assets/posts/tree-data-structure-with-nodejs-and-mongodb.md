@@ -192,7 +192,7 @@ export interface Node {
 }
 ```
 
-[This](https://github.com/jkkrow/tree-data-structure-with-nodejs-and-mongodb/blob/main/example-tree.json) is an example tree data that we're expecting to receive from client app. As you can see, it is quite large data even though child nodes of it are not that many.
+How should we store this tree object? [This](https://github.com/jkkrow/tree-data-structure-with-nodejs-and-mongodb/blob/main/example-tree.json) is an example tree data that we're expecting to receive from client app. As you can see, it is quite large data even though child nodes of it are not that many.
 
 When storing a data into the database, maintaining a data in a one large document is a pretty bad practice. Even though MongoDB supports embedded data models, storing large documents can lead to excessive RAM and bandwidth usage, as well as bad performance. 
 
@@ -292,20 +292,347 @@ export interface NodeDto extends Node {
 
 ## Create & Update Data
 
+Normally, when creating a rest api, we split create and update job into different routes. And the http method is usually `POST` and `PATCH` for each route.
+
+However, in this project, due to the workflow that the whole tree data is created and updated in the client side, it would be much simpler to combine this two job into one **upsert** job with `PUT` method.
+
+Also, we'll handle both tree and node documents in this one route because it keeps tree and node integrated and only needs one http request for updating every nodes insdie the tree.
+
+Therefore, the request handler for this `PUT` method will look like this:
+
+```ts:src/controllers/tree.controller.ts
+import * as TreeService from '../services/tree.service';
+import * as NodeService from '../services/node.service';
+
+// ...
+
+router.put('/', async (req, res) => {
+  const { tree } = req.body;
+
+  await TreeService.upsert(tree);
+  await NodeService.upsertByTree(tree);
+
+  res.json({ message: 'Updated tree and nodes' });
+});
+```
+
+It should receive a tree as a request body.
+
 ### Upsert Tree Document
+
+Let's begin with tree document. To make an upsert job, we should validate if the tree is already exists.
+
+Remember that the tree we get from the client is `TreeDto` type instead of `Tree` type that we defined to create schema.
+
+We should find a tree with `root` field since it is unique for every tree and more importantly, we don't expect the `TreeDto` to have `_id` field.
+
+```ts:src/services/tree.service.ts
+import { TreeDto, TreeModel } from '../models/tree.model';
+
+export const upsert = async (treeDto: TreeDto) => {
+  const treeDocument = await TreeModel.findOne({ root: treeDto.root.id });
+};
+```
+
+If the tree is not exist, create a new one, or update the `info` field. Make sure to modify `root` field when creating a new document because it should only store the reference of the root node.
+
+```ts:src/services/tree.service.ts
+export const upsert = async (treeDto: TreeDto) => {
+  const treeDocument = await TreeModel.findOne({ root: treeDto.root.id });
+
+  if (!treeDocument) {
+    const newTree = new TreeModel({ ...treeDto, root: treeDto.root.id });
+    return await newTree.save();
+  }
+
+  treeDocument.info = { ...treeDocument.info, ...treeDto.info };
+
+  return await treeDocument.save();
+};
+```
 
 ### Upsert Node Documents
 
-### Batch Multiple Jobs
+Upserting a node document needs more process than tree. Since the `TreeDto` we receive will contain a number of nodes, we need to handle them into a batch operation for better performance. In MongoDB, there is a method called `bulkwrite` that can combine `insertMany`, `updateMany`, and `deleteMany`.
+
+We can divide this process into 4 steps:
+
+1. Find every nodes that related to `TreeDto` in the database.
+2. Compare nodes of the `TreeDto` with saved nodes. We can validate the status of each node as "created", "updated", and "deleted".
+3. Create a job for each node depending on the status.
+4. Batch jobs with a single `bulkwrite` operation.
+
+```ts:src/services/node.service.ts
+export const upsertByTree = async (treeDto: TreeDto) => {
+  // Find nodes
+
+  // Validate nodes
+
+  // Make different jobs for the status of nodes
+
+  // Batch jobs with a single operation
+};
+```
+
+#### Find Nodes with Aggregation
+
+I mentioned earlier that we're using parent references with `parentId` field to connect the nodes. In MongoDB, we can join documents with aggregation pipeline. For searching a tree nodes, we can use [`$graphLookup`](https://www.mongodb.com/docs/manual/reference/operator/aggregation/graphLookup/) stage.
+
+```ts:src/services/node.service.ts
+export const findByTree = async (rootId: string) => {
+  const result = await NodeModel.aggregate([
+    { $match: { id: rootId } },
+    {
+      $graphLookup: {
+        from: 'nodes', // target collection
+        startWith: '$id', // where to start
+        connectFromField: 'id', // used to match against the "connectToField"
+        connectToField: 'parentId', // compare it to "connectFromField"
+        as: 'children', // a field added with outputs
+      },
+    },
+  ]);
+};
+```
+
+The `$graphLookup` performs a recursive search on a collection. In above function, it'll find nodes that `parentId` is matched against `id` field. Every nodes that matched against this stage will be stored in `children` field.
+
+Therefore, the output of this aggregation will be a `Node` with a `children` field with array of `Node`. For a solid type checking, let's define another type for this result.
+
+```ts:src/models/node.model.ts
+export interface NodeAggregateResult extends Node {
+  children: Node[];
+}
+```
+
+Note that it is not same as `NodeDto` whose `children` field is `NodeDto[]`.
+
+```ts:src/models/node.model.ts
+const result = await NodeModel.aggregate<NodeAggregateResult>([
+  // ...
+]);
+```
+
+Let's tweak the result because we want to return nodes in a form of array.
+
+```ts:src/services/node.service.ts
+export const findByTree = async (rootId: string) => {
+  const result = await NodeModel.aggregate<NodeAggregateResult>([
+    { $match: { id: rootId } },
+    {
+      $graphLookup: {
+        from: 'nodes',
+        startWith: '$id',
+        connectFromField: 'id',
+        connectToField: 'parentId',
+        as: 'children',
+      },
+    },
+  ]);
+
+  const rootWithNodes = result[0];
+  const nodes = rootWithNodes ? [rootWithNodes, ...rootWithNodes.children] : [];
+
+  return nodes;
+};
+```
+```ts:src/services/node.service.ts
+export const upsertByTree = async (treeDto: TreeDto) => {
+  const prevNodes = await findByTree(treeDto.root.id);
+};
+```
+
+We also need to convert the `TreeDto` into a array the nodes. For that, we can traverse the tree with `while` loop like below:
+
+```ts:src/util/tree.ts
+export const traverseNodes = (root: NodeDto) => {
+  let currentNode = root;
+  const queue: NodeDto[] = [];
+  const nodes: NodeDto[] = [];
+
+  queue.push(currentNode);
+
+  while (queue.length) {
+    currentNode = queue.shift()!;
+
+    nodes.push(currentNode);
+
+    if (currentNode.children.length) {
+      currentNode.children.forEach((child) => queue.push(child));
+    }
+  }
+
+  return nodes;
+};
+```
+```ts:src/services/node.service.ts
+export const upsertByTree = async (treeDto: TreeDto) => {
+  const prevNodes = await findByTree(treeDto.root.id);
+  const newNodes = traverseNodes(treeDto.root);
+};
+```
+
+#### Compare New Nodes and Old Nodes
+
+Now we need to compare them to identify what changes has been made between them.
+
+If the node only exists in `prevNodes`, it must be deleted. On the other hand, if the node only exists in `newNodes`, it is newly created node. Finally, if the node exists in both group, its `info` field should be updated.
+
+```ts:src/services/node.service.ts
+export const upsertByTree = async (treeDto: TreeDto) => {
+  const prevNodes = await findByTree(treeDto.root.id);
+  const newNodes = traverseNodes(treeDto.root);
+
+  // Find created nodes
+  const createdNodes = newNodes.filter(
+    (newNode) => !prevNodes.some((prevNode) => newNode.id === prevNode.id)
+  );
+  // Find updated nodes
+  const updatedNodes = newNodes.filter((newNode) =>
+    prevNodes.some((prevNode) => newNode.id === prevNode.id)
+  );
+  // Find deleted nodes
+  const deletedNodes = prevNodes.filter(
+    (prevNode) => !newNodes.some((newNode) => newNode.id === prevNode.id)
+  );
+};
+```
+
+#### Create a Job for Each Node
+
+Depending on the status of nodes, we should create `insert`, `update`, and `delete` job for the `bulkwrite` operation.
+
+```ts:src/services/node.service.ts
+const _getInsertJobs = (nodes: (Node | NodeDto)[]) => {
+  const insertBulk = nodes.map((node) => ({
+    insertOne: { document: node },
+  }));
+
+  return insertBulk;
+};
+
+const _getUpdateJobs = (nodes: (Node | NodeDto)[]) => {
+  const updateBulk = nodes.map((node) => ({
+    updateOne: {
+      filter: { id: node.id },
+      update: { $set: { info: node.info } },
+    },
+  }));
+
+  return updateBulk;
+};
+
+const _getDeleteJobs = (nodes: (Node | NodeDto)[]) => {
+  const deleteBulk = [
+    {
+      deleteMany: {
+        filter: { id: { $in: nodes.map((node) => node.id) } },
+      },
+    },
+  ];
+
+  return deleteBulk;
+};
+```
+
+You can find a instruction of the `bulkwrite` operation in [MongoDB documentation](https://www.mongodb.com/docs/manual/reference/method/db.collection.bulkWrite/).
+
+#### Batch Multiple Jobs
+
+After creating jobs for every nodes, push it into a single array so that it can be passed to `bulkwrite` as an argument. The final shape of the function will be like below:
+
+```ts:src/services/node.service.ts
+export const upsertByTree = async (treeDto: TreeDto) => {
+  const newNodes = traverseNodes(treeDto.root);
+  const prevNodes = await findByTree(treeDto.root.id);
+
+  // Find created nodes
+  const createdNodes = newNodes.filter(
+    (newNode) => !prevNodes.some((prevNode) => newNode.id === prevNode.id)
+  );
+  // Find updated nodes
+  const updatedNodes = newNodes.filter((newNode) =>
+    prevNodes.some((prevNode) => newNode.id === prevNode.id)
+  );
+  // Find deleted nodes
+  const deletedNodes = prevNodes.filter(
+    (prevNode) => !newNodes.some((newNode) => newNode.id === prevNode.id)
+  );
+
+  const bulkJobs: any[] = [];
+
+  if (createdNodes.length) {
+    bulkJobs.push(..._getInsertJobs(createdNodes));
+  }
+  if (updatedNodes.length) {
+    bulkJobs.push(..._getUpdateJobs(updatedNodes));
+  }
+  if (deletedNodes.length) {
+    bulkJobs.push(..._getDeleteJobs(deletedNodes));
+  }
+
+  return await NodeModel.bulkWrite(bulkJobs);
+};
+```
+
+> You might notice that we are passing `NodeDto` into insert job which has `children` property unlike the `Node` schema we defined. However, it will be stored properly without the `children` property as we defined.
+
+> You should also note that the `bulkwrite` method does not trigger the Mongoose middlewares and therefore it's not a best practice that Mongoose documentation recommends. This is a trade-off for the performance we get.
 
 ## Delete Data
 
+A process of deleting tree and node will be similar to the upsert job. First, we delete the tree document, then find all nodes belong to the tree and delete them.
+
+```ts:src/controllers/tree.controller.ts
+router.delete('/:rootId', async (req, res) => {
+  const { rootId } = req.params;
+
+  await TreeService.remove(rootId);
+  await NodeService.removeByTree(rootId);
+
+  res.json({ message: 'Removed tree and nodes' });
+});
+```
+
+This time, we receive `rootId` of the tree from the request params.
+
 ### Delete Tree Documnent
+
+Deleting tree is very simple. Find the tree if it is exists, them remove it.
+
+```ts:src/services/tree.service.ts
+export const remove = async (rootId: string) => {
+  const treeDocument = await TreeModel.findOne({ root: rootId });
+
+  if (!treeDocument) {
+    return;
+  }
+
+  return await treeDocument.remove();
+};
+```
 
 ### Delete Node Documents
 
+To delete nodes, we can reuse the functions already created for upsert job.
+
+First, find every nodes belong to the tree with `$graphLookup` aggregation, create a delete job for batch operation, then call `bulkwrite`.
+
+```ts:src/services/node.service.ts
+export const removeByTree = async (rootId: string) => {
+  const prevNodes = await findByTree(rootId);
+  const deleteBulk = _getDeleteJobs(prevNodes);
+
+  return await NodeModel.bulkWrite(deleteBulk);
+};
+```
+
 ## Get Data
+
+
 
 ### Get Multiple Trees with Root
 
 ### Get Single Tree with Nodes
+
+## Conclusion
