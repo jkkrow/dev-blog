@@ -577,7 +577,7 @@ export const upsertByTree = async (treeDto: TreeDto) => {
 
 > You might notice that we are passing `NodeDto` into insert job which has `children` property unlike the `Node` schema we defined. However, it will be stored properly without the `children` property as we defined.
 
-> You should also note that the `bulkwrite` method does not trigger the Mongoose middlewares and therefore it's not a best practice that Mongoose documentation recommends. This is a trade-off for the performance we get.
+> You should also note that the `bulkwrite` method does not trigger Mongoose middlewares and therefore it's not a best practice that Mongoose documentation recommends. This is a trade-off for the performance we get.
 
 ## Delete Data
 
@@ -629,10 +629,211 @@ export const removeByTree = async (rootId: string) => {
 
 ## Get Data
 
+To retrieve saved tree data, we'll create two routes. One for fetching multiple trees with only the root node attached, and one for fetching a single tree with all nodes attached.
 
+This is a general use of api when fetching a data. Usually when fetching multiple documents, it is unlikely to need detail information about the document, and this is why we split the tree into multiple node documents.
+
+```ts:src/controllers/tree.controller.ts
+router.get('/', async (req, res) => {
+  const trees = await TreeService.findWithRoot();
+
+  res.json({ trees });
+});
+
+router.get('/:rootId', async (req, res) => {
+  const { rootId } = req.params;
+
+  const tree = await TreeService.findOneWithNodes(rootId);
+
+  res.json({ tree });
+});
+```
 
 ### Get Multiple Trees with Root
 
+To fetch a tree with a root node, we have to query two documents from different collections. For that, we can use join with another aggregation pipeline: `$lookup`.
+
+Again, we're actively leveraging the MongoDB aggregation since it is more performant than querying documents seperately. Although Mongoose provides `populate()` method to join documents, it just makes seperate queries in the background and therefore not as performant as `$lookup`.
+
+```ts:src/services/tree.service.ts
+export const findWithRoot = async () => {
+  return await TreeModel.aggregate<TreeDto>([
+    {
+      $lookup: {
+        from: 'nodes',
+        localField: 'root',
+        foreignField: 'id',
+        as: 'root',
+      },
+    },
+    { $unwind: '$root' },
+  ]);
+};
+```
+
+The `$lookup` stage will return a array that contains root node in the `root` field. To make this array into a single object, we can use `$unwind` stage. Then the final result will be the form of `TreeDto[]`.
+
 ### Get Single Tree with Nodes
+
+We only left final route. This time, we also need to fetch every nodes belong to the root. Of course, we can achieve it in a single aggregation pipeline. All we need to do is to combine `$lookup` and `$graphLookup` stage.
+
+```ts:src/services/tree.service.ts
+export const findOneWithNodes = async (rootId: string) => {
+  const result = await TreeModel.aggregate([
+    { $match: { root: rootId } },
+    {
+      $lookup: {
+        from: 'nodes',
+        let: { root: '$root' },
+        as: 'root',
+        pipeline: [
+          { $match: { $expr: { $eq: ['$$root', '$id'] } } },
+          {
+            $graphLookup: {
+              from: 'nodes',
+              startWith: '$id',
+              connectFromField: 'id',
+              connectToField: 'parentId',
+              as: 'children',
+            },
+          },
+        ],
+      },
+    },
+    { $unwind: '$root' },
+  ]);
+};
+```
+
+You can build a custom pipeline inside `$lookup` query with `pipeline` property instead of `localField` and `foreignField`. For that, we need to specify variables in `let` field to access local field from inside the pipeline. Note that a `$match` stage requires the use of `$expr` operator to access variables.
+
+To see more detail about `$lookup` stage, check out [MongoDB documentation](https://www.mongodb.com/docs/manual/reference/operator/aggregation/lookup/).
+
+The result of this aggregation can be defined as below:
+
+```ts:src/models/tree.model.ts
+export interface TreeAggregateResult extends Omit<Tree, 'root'> {
+  root: NodeAggregateResult;
+}
+```
+```ts:src/services/tree.service.ts
+const result = await TreeModel.aggregate<TreeAggregateResult>([
+  // ...
+]); 
+```
+
+As a final process, we need to convert this result into `TreeDto`. Here's a utility function that build a tree from an array of nodes.
+
+```ts:src/util/tree.ts
+export const buildTree = (nodes: Node[]) => {
+  const map: { [key: string]: number } = {};
+  let root: NodeDto = {
+    id: '',
+    parentId: null,
+    level: 0,
+    info: { name: '', description: '' },
+    children: [],
+  };
+
+  const nodeDtos: NodeDto[] = nodes.map((node, index) => {
+    map[node.id] = index;
+    const nodeDto = { ...node, children: [] };
+
+    return nodeDto;
+  });
+
+  nodeDtos.forEach((node) => {
+    if (node.parentId) {
+      nodeDtos[map[node.parentId]].children.push(node);
+    } else {
+      root = node;
+    }
+  });
+
+  return root;
+};
+```
+
+1. Receive `Node[]` as an argument and create initial map object and root node.
+2. Map through `nodes` argument. Set the map with the key of node id and value of index. Then return a `NodeDto[]`.
+3. For every node in the `NodeDto[]`, if it has `parentId`, push itself into the `children` property of parent node.
+4. If it doesn't have `parentId` it is the root node which finally will be returned.
+
+With that, we can return a `TreeDto` like below:
+
+```ts:src/services/tree.service.ts
+export const findOneWithNodes = async (rootId: string) => {
+  const result = await TreeModel.aggregate<TreeAggregateResult>([
+    { $match: { root: rootId } },
+    {
+      $lookup: {
+        from: 'nodes',
+        let: { root: '$root' },
+        as: 'root',
+        pipeline: [
+          { $match: { $expr: { $eq: ['$$root', '$id'] } } },
+          {
+            $graphLookup: {
+              from: 'nodes',
+              startWith: '$id',
+              connectFromField: 'id',
+              connectToField: 'parentId',
+              as: 'children',
+            },
+          },
+        ],
+      },
+    },
+    { $unwind: '$root' },
+  ]);
+
+  if (!result.length) {
+    return null;
+  }
+
+  const treeWithNodes = result[0];
+  const nodes = [treeWithNodes.root, ...treeWithNodes.root.children];
+  const root = buildTree(nodes);
+
+  const treeDto: TreeDto = { ...treeWithNodes, root };
+
+  return treeDto;
+};
+```
+
+## Testing
+
+That's all for building an api for this project. To test it, modify some codes of your [frontend app](https://github.com/jkkrow/tree-data-structure-with-react-and-redux) like below:
+
+```tsx:components/Tree/index.tsx
+const submitTreeHandler = async () => {
+  const response = await fetch('http://localhost:5000/api/trees', {
+    method: 'PUT',
+    body: JSON.stringify({ tree }),
+    headers: { 'Content-Type': 'application/json' },
+  });
+
+  const data = await response.json();
+
+  alert(data.message);
+};
+
+const removeTreeHandler = async () => {
+  const response = await fetch(
+    `http://localhost:5000/api/trees/${tree.root.id}`,
+    {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+    }
+  );
+
+  const data = await response.json();
+
+  alert(data.message);
+  dispatch(treeActions.deleteTree());
+};
+```
+
+Alternatively, you can use [this example tree](https://github.com/jkkrow/tree-data-structure-with-nodejs-and-mongodb/blob/main/example-tree.json) with a tool like Postman.
 
 ## Conclusion
