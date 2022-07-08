@@ -17,11 +17,13 @@ Here's a workflow of how the api will work:
 
 <!-- Image -->
 
+It receives tree data from client. It split the tree into nodes and store in the node collection. Then, it stores tree document in the tree collection which has a reference to the root node.
+
 In this post, we'll create endpoints for `GET`, `PUT`, and `DELETE` methods.
 
 1. The `PUT` route will update the tree document if it already exists, or create a new one.
 2. The `DELETE` route will delete the tree document and every node documents related.
-3. One `GET` route will return a array of tree documents with a root node included
+3. One `GET` route will return an array of tree documents with a root node included
 4. Another `GET` route will return a single tree document with every nodes included.
 
 ## Get Started
@@ -147,7 +149,7 @@ const initiateServer = async () => {
 initiateServer();
 ```
 
-Finally, create a route to receives requests with multiple endpoints.
+Then, create a route to receives requests with multiple endpoints.
 
 ```ts:src/controllers/tree.controller.ts
 import express from 'express';
@@ -171,7 +173,39 @@ app.use(cors());
 app.use('/api/trees', treeController);
 ```
 
-That's all for basic app setup. Let's move on to build some business logics.
+Finally, if you want to test the api along with, modify some codes of your [frontend app](https://github.com/jkkrow/tree-data-structure-with-react-and-redux) like below so that you can easily test the api:
+
+```tsx:components/Tree/index.tsx
+// This is a frontend app built in the previous post!
+
+const submitTreeHandler = async () => {
+  const response = await fetch('http://localhost:5000/api/trees', {
+    method: 'PUT',
+    body: JSON.stringify({ tree }),
+    headers: { 'Content-Type': 'application/json' },
+  });
+
+  const data = await response.json();
+
+  alert(data.message);
+};
+
+const removeTreeHandler = async () => {
+  const response = await fetch(`http://localhost:5000/api/trees/${tree.root.id}`, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+  });
+
+  const data = await response.json();
+
+  alert(data.message);
+  dispatch(treeActions.deleteTree());
+};
+```
+
+Alternatively, you can use [this example tree](https://github.com/jkkrow/tree-data-structure-with-nodejs-and-mongodb/blob/main/example-tree.json) with a tool like Postman.
+
+That's all for the preparation. Let's move on to build main logics.
 
 ## Define Models
 
@@ -296,7 +330,7 @@ Normally, when creating a rest api, we split create and update job into differen
 
 However, in this project, due to the workflow that the whole tree data is created and updated in the client side, it would be much simpler to combine this two job into one **upsert** job with `PUT` method.
 
-Also, we'll handle both tree and node documents in this one route because it keeps tree and node integrated and only needs one http request for updating every nodes insdie the tree.
+Also, we'll handle both tree and node documents in this one route because it keeps tree and node integrated and only needs one http request for updating every nodes inside the tree.
 
 Therefore, the request handler for this `PUT` method will look like this:
 
@@ -318,11 +352,11 @@ router.put('/', async (req, res) => {
 
 It should receive a tree as a request body.
 
-### Upsert Tree Document
+### Upsert a Tree Document
 
-Let's begin with tree document. To make an upsert job, we should validate if the tree is already exists.
+Let's begin with tree document. To make an upsert job, we should validate if the tree already exists.
 
-Remember that the tree we get from the client is `TreeDto` type instead of `Tree` type that we defined to create schema.
+Remember that the tree we get from the client is `TreeDto` type instead of `Tree` that we defined to create schema.
 
 We should find a tree with `root` field since it is unique for every tree and more importantly, we don't expect the `TreeDto` to have `_id` field.
 
@@ -334,7 +368,7 @@ export const upsert = async (treeDto: TreeDto) => {
 };
 ```
 
-If the tree is not exist, create a new one, or update the `info` field. Make sure to modify `root` field when creating a new document because it should only store the reference of the root node.
+If the tree doesn't exist, create a new one, or, update the `info` field. Make sure to modify `root` field when creating a new document because it should only store the reference of the root node.
 
 ```ts:src/services/tree.service.ts
 export const upsert = async (treeDto: TreeDto) => {
@@ -376,7 +410,7 @@ export const upsertByTree = async (treeDto: TreeDto) => {
 
 #### Find Nodes with Aggregation
 
-I mentioned earlier that we're using parent references with `parentId` field to connect the nodes. In MongoDB, we can join documents with aggregation pipeline. For searching a tree nodes, we can use [`$graphLookup`](https://www.mongodb.com/docs/manual/reference/operator/aggregation/graphLookup/) stage.
+As mentioned before, we're using parent references with `parentId` field to connect the nodes. In MongoDB, we can join documents with aggregation pipeline. For searching a tree nodes, we can use `$graphLookup` stage.
 
 ```ts:src/services/node.service.ts
 export const findByTree = async (rootId: string) => {
@@ -384,11 +418,11 @@ export const findByTree = async (rootId: string) => {
     { $match: { id: rootId } },
     {
       $graphLookup: {
-        from: 'nodes', // target collection
-        startWith: '$id', // where to start
-        connectFromField: 'id', // used to match against the "connectToField"
-        connectToField: 'parentId', // compare it to "connectFromField"
-        as: 'children', // a field added with outputs
+        from: 'nodes',
+        startWith: '$id', 
+        connectFromField: 'id',
+        connectToField: 'parentId', 
+        as: 'children',
       },
     },
   ]);
@@ -397,7 +431,9 @@ export const findByTree = async (rootId: string) => {
 
 The `$graphLookup` performs a recursive search on a collection. In above function, it'll find nodes that `parentId` is matched against `id` field. Every nodes that matched against this stage will be stored in `children` field.
 
-Therefore, the output of this aggregation will be a `Node` with a `children` field with array of `Node`. For a solid type checking, let's define another type for this result.
+Optionally, you can add `restrictSearchWithMatch` field to specify additional conditions for search. You can see a full documentation of `$graphLookup` [here](https://www.mongodb.com/docs/manual/reference/operator/aggregation/graphLookup/).
+
+The output of this aggregation will be `Node` with a `children` field of `Node[]`. For a solid type checking, let's define another type for this result.
 
 ```ts:src/models/node.model.ts
 export interface NodeAggregateResult extends Node {
@@ -405,7 +441,7 @@ export interface NodeAggregateResult extends Node {
 }
 ```
 
-Note that it is not same as `NodeDto` whose `children` field is `NodeDto[]`.
+Note that it is not same with `NodeDto` whose `children` field is `NodeDto[]`.
 
 ```ts:src/models/node.model.ts
 const result = await NodeModel.aggregate<NodeAggregateResult>([
@@ -433,7 +469,7 @@ export const findByTree = async (rootId: string) => {
   const rootWithNodes = result[0];
   const nodes = rootWithNodes ? [rootWithNodes, ...rootWithNodes.children] : [];
 
-  return nodes;
+  return nodes; // Node[]
 };
 ```
 ```ts:src/services/node.service.ts
@@ -596,7 +632,7 @@ router.delete('/:rootId', async (req, res) => {
 
 This time, we receive `rootId` of the tree from the request params.
 
-### Delete Tree Documnent
+### Delete a Tree Documnent
 
 Deleting tree is very simple. Find the tree if it is exists, them remove it.
 
@@ -671,9 +707,9 @@ export const findWithRoot = async () => {
 };
 ```
 
-The `$lookup` stage will return a array that contains root node in the `root` field. To make this array into a single object, we can use `$unwind` stage. Then the final result will be the form of `TreeDto[]`.
+The `$lookup` stage will return an array that contains root node in the `root` field. To make this array into a single object, we can use `$unwind` stage. Then the final result will be the form of `TreeDto[]`.
 
-### Get Single Tree with Nodes
+### Get a Single Tree with Nodes
 
 We only left final route. This time, we also need to fetch every nodes belong to the root. Of course, we can achieve it in a single aggregation pipeline. All we need to do is to combine `$lookup` and `$graphLookup` stage.
 
@@ -722,7 +758,7 @@ const result = await TreeModel.aggregate<TreeAggregateResult>([
 ]); 
 ```
 
-As a final process, we need to convert this result into `TreeDto`. Here's a utility function that build a tree from an array of nodes.
+As a final process, we need to convert this result into `TreeDto`. Here's a utility function that builds a tree from an array of nodes.
 
 ```ts:src/util/tree.ts
 export const buildTree = (nodes: Node[]) => {
@@ -756,8 +792,8 @@ export const buildTree = (nodes: Node[]) => {
 
 1. Receive `Node[]` as an argument and create initial map object and root node.
 2. Map through `nodes` argument. Set the map with the key of node id and value of index. Then return a `NodeDto[]`.
-3. For every node in the `NodeDto[]`, if it has `parentId`, push itself into the `children` property of parent node.
-4. If it doesn't have `parentId` it is the root node which finally will be returned.
+3. For each node in the `NodeDto[]`, if it has `parentId`, push itself into the `children` property of parent node using the map opject.
+4. If it doesn't have `parentId`, it is the root node which will be finally returned.
 
 With that, we can return a `TreeDto` like below:
 
@@ -801,39 +837,6 @@ export const findOneWithNodes = async (rootId: string) => {
 };
 ```
 
-## Testing
-
-That's all for building an api for this project. To test it, modify some codes of your [frontend app](https://github.com/jkkrow/tree-data-structure-with-react-and-redux) like below:
-
-```tsx:components/Tree/index.tsx
-const submitTreeHandler = async () => {
-  const response = await fetch('http://localhost:5000/api/trees', {
-    method: 'PUT',
-    body: JSON.stringify({ tree }),
-    headers: { 'Content-Type': 'application/json' },
-  });
-
-  const data = await response.json();
-
-  alert(data.message);
-};
-
-const removeTreeHandler = async () => {
-  const response = await fetch(
-    `http://localhost:5000/api/trees/${tree.root.id}`,
-    {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-    }
-  );
-
-  const data = await response.json();
-
-  alert(data.message);
-  dispatch(treeActions.deleteTree());
-};
-```
-
-Alternatively, you can use [this example tree](https://github.com/jkkrow/tree-data-structure-with-nodejs-and-mongodb/blob/main/example-tree.json) with a tool like Postman.
-
 ## Conclusion
+
+That's all for handling a tree data structure with NodeJS and MongoDB! You can review the source code in [here](https://github.com/jkkrow/tree-data-structure-with-nodejs-and-mongodb).
