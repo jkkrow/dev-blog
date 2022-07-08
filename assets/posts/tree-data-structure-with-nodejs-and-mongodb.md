@@ -9,19 +9,23 @@ isFeatured: true
 
 In the [previous post](/posts/tree-data-structure-with-react-and-redux), we built a tree data in a frontend app with React and Redux. We can dynamically create, update, and remove nodes inside the tree.
 
-Now we want to send this data to a backend app and store it in a database so that we can retrieve it later. Therefore, in this post, we'll build an api that can handle this tree data using NodeJS and MongoDB.
+Now we want to send this data to a backend app and store it in a database so that we can retrieve it later. Therefore, in this post, we'll build an API server that can handle this tree data using NodeJS and MongoDB.
 
 ## Overview
 
-Here's a workflow of how the api will work:
+Here's a workflow of how the server will work:
 
-<!-- Image -->
+![overview-1](overview-1.png)
 
-It receives tree data from client. It split the tree into nodes and store in the node collection. Then, it stores tree document in the tree collection which has a reference to the root node.
+When storing a data into database, It receives tree data from client. It splits the tree into nodes and stores them in the **Node Collection**. Then, it stores tree document in the **Tree Collection** with the reference to the root node.
+
+When retrieving the data from database, the server fetches node documents from the node collection and join with tree document. Then it returns the merged tree to the client.
 
 In this post, we'll create endpoints for `GET`, `PUT`, and `DELETE` methods.
 
-1. The `PUT` route will update the tree document if it already exists, or create a new one.
+![overview-2](overview-2.png)
+
+1. The `PUT` route will create a new tree document and node documents if not exist. If already exist, it will update them.
 2. The `DELETE` route will delete the tree document and every node documents related.
 3. One `GET` route will return an array of tree documents with a root node included
 4. Another `GET` route will return a single tree document with every nodes included.
@@ -173,7 +177,7 @@ app.use(cors());
 app.use('/api/trees', treeController);
 ```
 
-Finally, if you want to test the api along with, modify some codes of your [frontend app](https://github.com/jkkrow/tree-data-structure-with-react-and-redux) like below so that you can easily test the api:
+Finally, if you want to test the API along with, modify some codes of your [frontend app](https://github.com/jkkrow/tree-data-structure-with-react-and-redux) like below so that you can easily test the API:
 
 ```tsx:components/Tree/index.tsx
 // This is a frontend app built in the previous post!
@@ -309,7 +313,7 @@ export const NodeModel = model<Node>('Node', nodeSchema);
 
 ### Define DTO Type
 
-We're almost done modeling a tree. Before diving into CRUD operation logics, we also need to define types for client side data. Because our api should ultimately receive and return a tree data in a form of we defined in frontend app, and the data is inconsistent with the types we defined.
+We're almost done modeling a tree. Before diving into CRUD operation logics, we also need to define types for client side data. Because our API should ultimately receive and return a tree data in a form of we defined in frontend app, and the data is inconsistent with the types we defined.
 
 Therefore, let's call theses types as DTO types which refers to Data Transfer Object.
 
@@ -326,7 +330,7 @@ export interface NodeDto extends Node {
 
 ## Create & Update Data
 
-Normally, when creating a rest api, we split create and update job into different routes. And the http method is usually `POST` and `PATCH` for each route.
+Normally, when creating a rest API, we split create and update job into different routes. And the http method is usually `POST` and `PATCH` for each route.
 
 However, in this project, due to the workflow that the whole tree data is created and updated in the client side, it would be much simpler to combine this two job into one **upsert** job with `PUT` method.
 
@@ -667,7 +671,7 @@ export const removeByTree = async (rootId: string) => {
 
 To retrieve saved tree data, we'll create two routes. One for fetching multiple trees with only the root node attached, and one for fetching a single tree with all nodes attached.
 
-This is a general use of api when fetching a data. Usually when fetching multiple documents, it is unlikely to need detail information about the document, and this is why we split the tree into multiple node documents.
+This is a general use of API when fetching a data. Usually when fetching multiple documents, it is unlikely to need detail information about the document, and this is why we split the tree into multiple node documents.
 
 ```ts:src/controllers/tree.controller.ts
 router.get('/', async (req, res) => {
