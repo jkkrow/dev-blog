@@ -5,7 +5,7 @@ import { getAllPosts } from './posts';
 
 export const generateRssFeed = async () => {
   const posts = getAllPosts();
-  const blogDomain = process.env.VERCEL_URL!;
+  const blogDomain = process.env.BLOG_DOMAIN!;
   const date = new Date();
   const author = {
     name: process.env.AUTHOR_NAME,
