@@ -6,7 +6,7 @@
   <p align="center">
     A Full Stack Web Development Blog built with <a href="https://nextjs.org">NextJS</a>
     <br />
-    <a href="https://watchtrees.com">
+    <a href="https://blog.junkukim.com">
       <strong>Explore the live website »</strong>
     </a>
   </p>
@@ -34,20 +34,28 @@ This blog contains a number of posts about various topics such as React, Node, E
 
 [See more blog posts »](https://blog.junkukim.com)
 
-## Requirements
+## Getting Started
+
+This is an instruction of how to set up the project locally. To get a local copy up and running, follow these simple steps.
+
+### Requirements
 
 You must have Node.js and npm installed on your machine. This project was built against the following versions:
  
 - Node v16.3.0
 - npm v7.15.1
 
-## Setup
+### Installation
 
-- Clone the repository.
-- Run following commands in the project directory to start.
+To start the project, clone the repository and install dependencies with following command:
 
 ```bash
 npm install
+```
+
+You need to setup environment variables. Create `.env` file and configure necessary variables. Then, start the app by running:
+
+```bash
 npm run dev
 ```
 
