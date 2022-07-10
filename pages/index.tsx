@@ -6,6 +6,7 @@ import Hero from 'components/Hero';
 import PostGrid from 'components/Post/Grid';
 import { Post } from 'types/post';
 import { getFeaturedPosts } from 'lib/posts';
+import { generateRssFeed } from 'lib/feed';
 
 interface Props {
   posts: Post[];
@@ -28,6 +29,7 @@ const HomePage = ({
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
   const posts = getFeaturedPosts();
+  await generateRssFeed();
 
   return {
     props: { posts },

@@ -5,7 +5,7 @@ import HCaptcha from '@hcaptcha/react-hcaptcha';
 import Input from 'components/Input';
 import { useForm } from 'hooks/form';
 import { useApi } from 'hooks/api';
-import { VALIDATOR_EMAIL, VALIDATOR_REQUIRE } from 'lib/validators';
+import { VALIDATOR_EMAIL, VALIDATOR_REQUIRE } from 'util/validators';
 import classes from './index.module.scss';
 
 const ContainerVariants = {
