@@ -5,10 +5,7 @@ import classes from './index.module.scss';
 const Footer: React.FC = () => {
   return (
     <footer className={classes.footer}>
-      <small>
-        Copyright &copy; {new Date().getFullYear()} Junku Kim. All rights
-        reserved.
-      </small>
+      <small>&copy; {new Date().getFullYear()} Junku Kim.</small>
 
       <div className={classes.social}>
         <a
