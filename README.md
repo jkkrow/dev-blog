@@ -1,12 +1,12 @@
 <div align="center">
-  <a href="https://blog.junkukim.com">
+  <a href="https://blog.joonku.net">
     <img src="public/icons/favicon.ico" alt="Logo" width="100" height="100">
   </a>
   <h2 align="center">Dev Blog</h2>
   <p align="center">
     A Full Stack Web Development Blog built with <a href="https://nextjs.org">NextJS</a>
     <br />
-    <a href="https://blog.junkukim.com">
+    <a href="https://blog.joonku.net">
       <strong>Explore the live website »</strong>
     </a>
   </p>
@@ -26,13 +26,13 @@ This blog contains a number of posts about various topics such as React, Node, E
 ## Recent Posts
 
 <!-- BLOG-POST-LIST:START -->
-- [Dealing with a Tree Data Structure with NodeJS and MongoDB](https://blog.junkukim.com/posts/tree-data-structure-with-nodejs-and-mongodb)
-- [Building a Tree Data Structure with React and Redux](https://blog.junkukim.com/posts/tree-data-structure-with-react-and-redux)
-- [AWS VOD Streaming - Deliver Video with AWS CloudFront](https://blog.junkukim.com/posts/aws-vod-streaming-deliver)
-- [AWS VOD Streaming - Convert Video with AWS Lambda &amp; MediaConvert](https://blog.junkukim.com/posts/aws-vod-streaming-convert)
+- [Dealing with a Tree Data Structure with NodeJS and MongoDB](https://blog.joonku.net/posts/tree-data-structure-with-nodejs-and-mongodb)
+- [Building a Tree Data Structure with React and Redux](https://blog.joonku.net/posts/tree-data-structure-with-react-and-redux)
+- [AWS VOD Streaming - Deliver Video with AWS CloudFront](https://blog.joonku.net/posts/aws-vod-streaming-deliver)
+- [AWS VOD Streaming - Convert Video with AWS Lambda &amp; MediaConvert](https://blog.joonku.net/posts/aws-vod-streaming-convert)
 <!-- BLOG-POST-LIST:END -->
 
-[See more blog posts »](https://blog.junkukim.com)
+[See more blog posts »](https://blog.joonku.net)
 
 ## Getting Started
 

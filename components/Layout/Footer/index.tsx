@@ -6,7 +6,7 @@ const Footer: React.FC = () => {
   return (
     <footer className={classes.footer}>
       <small>
-        Copyright &copy; {new Date().getFullYear()} Junku Kim. All rights
+        Copyright &copy; {new Date().getFullYear()} Joonku Kim. All rights
         reserved.
       </small>
 
