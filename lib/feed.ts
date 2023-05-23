@@ -36,6 +36,8 @@ export const generateRssFeed = async () => {
       title: post.title,
       description: post.excerpt,
       content: post.excerpt,
+      image: `${blogDomain}/images/posts/${post.slug}/thumbnail.png`,
+      category: post.tags.map((tag) => ({ name: tag })),
       author: [author],
       contributor: [author],
       date: new Date(post.date),
